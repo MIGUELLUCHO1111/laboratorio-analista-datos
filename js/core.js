@@ -440,7 +440,7 @@ const Tutor = {
     if (!this.sample) {
       $('#tutorFab').classList.add('off');
       const off = $('#tutorOff'); off.hidden = false;
-      off.textContent = this.mode === 'unconfigured' ? 'Puedes escribir aquí, pero la IA aún no está conectada en este sitio: falta configurar la clave del servidor. Mientras tanto usa el diagnóstico automático, las pistas y soluciones.' : 'Puedes escribir aquí. Para que la IA responda, abre la plataforma dentro de Claude (versión Artifact) o en el sitio web con el tutor configurado.';
+      off.innerHTML = 'Para conversar con el Tutor IA, abre la plataforma en Claude: <a href="https://claude.ai/artifact/Mb16W8eV7Q6mx6ECoScuS9" target="_blank" rel="noopener">abrir la versión con Tutor IA</a>. Aquí el tutor en vivo sigue revisando todo lo que ejecutas.';
     }
   },
   /* El tutor registra cada ejecución en su panel: va a la par contigo */
@@ -470,7 +470,7 @@ const Tutor = {
     const log = $('#tutorLog');
     log.insertAdjacentHTML('beforeend', `<div class="msg me">${esc(text)}</div>`);
     if (!this.sample) {
-      log.insertAdjacentHTML('beforeend', `<div class="msg ai">Todavía no puedo responder en esta versión: la IA no está conectada aquí. ${this.mode === 'unconfigured' ? 'Quien administra el sitio debe agregar la clave ANTHROPIC_API_KEY en Vercel.' : 'Ábreme dentro de Claude (versión Artifact) para conversar.'} Mientras tanto, el tutor en vivo sigue revisando todo lo que ejecutas.</div>`);
+      log.insertAdjacentHTML('beforeend', `<div class="msg ai">Todavía no puedo responder en esta versión: la IA no está conectada aquí. Para conversar conmigo abre la versión en Claude: <a href="https://claude.ai/artifact/Mb16W8eV7Q6mx6ECoScuS9" target="_blank" rel="noopener">abrir Tutor IA</a>. Mientras tanto, el tutor en vivo sigue revisando todo lo que ejecutas.</div>`);
       log.scrollTop = log.scrollHeight; return;
     }
     const bubble = document.createElement('div'); bubble.className = 'msg ai'; bubble.textContent = 'Pensando…';
