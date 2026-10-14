@@ -45,6 +45,7 @@ const PY = (() => {
     out.className = 'out'; out.innerHTML = '<span class="dim">Ejecutando… (la primera vez carga el intérprete)</span>';
     try {
       const r = await run((c._pre || '') + ta.value);
+      Coach.report('python', c, { code: ta.value, err: r.err, out: r.out, offset: (c._pre || '').split('\n').length - 1, ta, okMsg: 'El código corrió sin errores. Lee la salida: ¿es lo que esperabas? Si no, imprime valores intermedios.' });
       if (r.err) {
         out.className = 'out err';
         out.innerHTML = esc(r.out) + `<b>${esc(r.err)}</b>${r.hint ? `\n💡 ${esc(r.hint)}` : ''}\n<button class="btn ghost sm" data-pyfix>Pedir ayuda a la IA con este error</button>`;

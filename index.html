@@ -498,6 +498,75 @@ main{background-image:radial-gradient(color-mix(in srgb,var(--ink) 9%,transparen
 .cur{display:inline-block;width:9px;height:1.1em;background:var(--yel);vertical-align:text-bottom;margin-left:2px;animation:blink 1s steps(1) infinite}
 @keyframes blink{50%{opacity:0}}
 .hero2 .btn.big{display:inline-block;text-align:left;line-height:1.35}
+
+/* ================= v4: modo galáctico + tutor en vivo ================= */
+:root{--glass:var(--panel);--neb:11%;--star-show:none}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#03050D;--panel:#0C1226;--panel-2:#141C38;--ink:#E9EEFF;--muted:#9EAAD0;--line:#26325A;
+  --code-bg:#060A18;--hero-bg:#060B1E;--side-bg:#040817;--side-2:#0A1230;
+  --glass:rgba(12,18,40,.74);--neb:24%;--star-show:block;--accent:#4BE08A;--on-accent:#03120A}}
+:root[data-theme="dark"]{
+  --bg:#03050D;--panel:#0C1226;--panel-2:#141C38;--ink:#E9EEFF;--muted:#9EAAD0;--line:#26325A;
+  --code-bg:#060A18;--hero-bg:#060B1E;--side-bg:#040817;--side-2:#0A1230;
+  --glass:rgba(12,18,40,.74);--neb:24%;--star-show:block;--accent:#4BE08A;--on-accent:#03120A}
+body{background:
+  radial-gradient(1000px 600px at 100% -10%, color-mix(in srgb,var(--blue) var(--neb),transparent), transparent 62%),
+  radial-gradient(900px 600px at -10% 110%, color-mix(in srgb,var(--green) var(--neb),transparent), transparent 60%),
+  radial-gradient(700px 500px at 55% 45%, color-mix(in srgb,#7B3CFF calc(var(--neb) * .6),transparent), transparent 70%),
+  radial-gradient(600px 420px at 85% 85%, color-mix(in srgb,var(--red) calc(var(--neb) * .5),transparent), transparent 70%),
+  var(--bg);background-attachment:fixed}
+#stars{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;display:var(--star-show)}
+.app{position:relative;z-index:1}
+:root[data-theme="dark"] main{background-image:none}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) main{background-image:none}}
+.card,.chal,.q,details.lesson,.rm-card,.how,.vis,.gz,.editor-bar,.out,.modcard{background:var(--glass);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.tabs{background:transparent}
+.tabs button{background:var(--glass)}
+.tabs button.on{background:var(--m)}
+.side{-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+
+/* ---------- editor con números de línea ---------- */
+.ed-wrap{display:flex;background:var(--code-bg);min-width:0}
+.gutter{margin:0;padding:14px 8px 14px 12px;text-align:right;color:var(--code-muted);font-family:var(--f-mono);font-size:14px;line-height:1.6;user-select:none;overflow:hidden;border-right:1px solid rgba(255,255,255,.08);min-width:42px;background:rgba(255,255,255,.02)}
+.gutter b{color:#fff;background:var(--bad);border-radius:4px;padding:0 4px;font-weight:700}
+.ed-wrap textarea.code{flex:1;min-width:0}
+
+/* ---------- tutor en vivo ---------- */
+.coach{border-radius:16px;padding:14px 16px;display:grid;gap:10px;border:1px solid var(--line);background:var(--glass);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);animation:rise .35s cubic-bezier(.2,.8,.2,1);border-left:6px solid var(--ok);margin-top:10px}
+.coach.err{border-left-color:var(--bad);box-shadow:0 10px 30px color-mix(in srgb,var(--bad) 18%,transparent)}
+.coach.warn{border-left-color:var(--yel)}
+.ch-h{display:flex;gap:12px;align-items:center}
+.ch-h > div{flex:1}
+.ch-tag{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.12em;font-weight:700;color:var(--muted)}
+.ch-h b{font-family:var(--f-display);text-transform:uppercase;font-size:16px}
+.coach.err .ch-h b{color:var(--bad)} .coach.ok .ch-h b{color:var(--ok)}
+.coach .mavatar{width:36px;height:36px;font-size:15px}
+.ch-x{background:none;border:0;color:var(--muted);font-size:20px;line-height:1}
+.ch-sec{display:grid;gap:5px}
+.ch-l{font-size:11.5px;text-transform:uppercase;letter-spacing:.1em;font-weight:800;color:var(--m-t,var(--accent))}
+.coach ol,.coach ul{margin:0;padding-left:20px;display:grid;gap:3px;font-size:15px}
+.ch-raw{display:block;white-space:pre-wrap;word-break:break-word;font-size:12.5px;color:var(--bad)}
+.ch-okp{font-size:15px}
+.ch-terms{display:flex;flex-wrap:wrap;gap:6px}
+.term-chip{border:1px dashed var(--accent);background:color-mix(in srgb,var(--accent) 10%,transparent);color:var(--ink);border-radius:99px;padding:3px 11px;font-size:13px;font-weight:600;transition:transform .15s}
+.term-chip:hover{transform:translateY(-2px)}
+.term-chip.known{border-style:solid;opacity:.75}
+.term-chip.known::before{content:"✓ ";color:var(--ok)}
+.term-def{background:var(--panel-2);border-radius:12px;padding:10px 12px;font-size:14.5px;animation:rise .25s}
+.ch-ai{border-top:1px dashed var(--line);padding-top:10px;display:grid;gap:6px;font-size:15px}
+.ch-foot{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.ch-auto{display:flex;gap:6px;align-items:center;font-size:13px;color:var(--muted)}
+.msg.ev{font-size:13px;padding:6px 10px;background:transparent;border:1px solid var(--line);align-self:stretch;max-width:100%}
+.msg.ev.err b{color:var(--bad)} .msg.ev.ok b{color:var(--ok)} .msg.ev.warn b{color:var(--warn)}
+.tutor-fab.ping .tf-dot{background:var(--bad);animation:pulse 1s 3}
+.tutor{background:var(--glass);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px)}
+
+/* ---------- diccionario personal ---------- */
+.dict{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,230px),1fr));gap:10px}
+.dterm{border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:grid;gap:4px}
+.dterm.known{border-color:var(--ok)}
+.fcard{border:2px solid var(--accent);border-radius:16px;padding:18px;display:grid;gap:8px;text-align:center;justify-items:center;background:var(--panel-2)}
+.fcard b{font-family:var(--f-display);font-size:26px;text-transform:uppercase}
 </style>
 
 <div class="app">
@@ -528,15 +597,16 @@ main{background-image:radial-gradient(color-mix(in srgb,var(--ink) 9%,transparen
 <canvas id="fx" aria-hidden="true"></canvas>
 <div class="lvlup" id="lvlup" role="status" aria-live="polite"><small>¡Subiste de nivel!</small><b id="lvlupName"></b></div>
 
-<script src="js/core.js?v=1792003357"></script>
-<script src="js/data.js?v=1792003357"></script>
-<script src="js/m-inicio.js?v=1792003357"></script>
-<script src="js/m-scraping.js?v=1792003357"></script>
-<script src="js/m-api.js?v=1792003357"></script>
-<script src="js/m-python.js?v=1792003357"></script>
-<script src="js/m-sql.js?v=1792003357"></script>
-<script src="js/m-excel.js?v=1792003357"></script>
-<script src="js/m-powerbi.js?v=1792003357"></script>
-<script src="js/m-extra.js?v=1792003357"></script>
+<script src="js/core.js?v=1792004466"></script>
+<script src="js/coach.js?v=1792004466"></script>
+<script src="js/data.js?v=1792004466"></script>
+<script src="js/m-inicio.js?v=1792004466"></script>
+<script src="js/m-scraping.js?v=1792004466"></script>
+<script src="js/m-api.js?v=1792004466"></script>
+<script src="js/m-python.js?v=1792004466"></script>
+<script src="js/m-sql.js?v=1792004466"></script>
+<script src="js/m-excel.js?v=1792004466"></script>
+<script src="js/m-powerbi.js?v=1792004466"></script>
+<script src="js/m-extra.js?v=1792004466"></script>
 <script>App.start();</script>
 </body></html>

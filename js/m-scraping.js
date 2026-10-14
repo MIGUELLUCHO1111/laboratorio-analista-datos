@@ -181,9 +181,11 @@ print(len(datos), datos)`;
           out.innerHTML = els.length ? `<p class="tcap"><b>${els.length}</b> elemento(s) encontrados</p>${tableHTML(['#', mode === 'attr' ? attr : 'texto'], vals.map((v, i) => [i + 1, v]))}` : `<p class="note warn">El selector no encontró nada. Revisa mayúsculas, puntos (clase) y almohadillas (id).</p>`;
           $('#pyOut', sec).innerHTML = codeBlock(pyCode(sel, mode, attr), 'py');
           if (!els.length) Tutor.lastError = `El selector "${sel}" no encontró elementos.`;
+          Coach.report('scraping', $('#pyOut', sec).closest('.card'), { code: sel, count: els.length, okMsg: `Encontraste ${els.length} elemento(s). Mira la tienda: están resaltados. ¿Son exactamente los que querías?` });
         } catch (e) {
           out.innerHTML = `<p class="note warn">Selector inválido: ${esc(e.message)}</p>`;
           Tutor.lastError = `Selector inválido "${sel}": ${e.message}`;
+          Coach.report('scraping', $('#pyOut', sec).closest('.card'), { code: sel, err: 'Selector inválido: ' + e.message });
         }
       };
       $('#selRun', sec).onclick = run;

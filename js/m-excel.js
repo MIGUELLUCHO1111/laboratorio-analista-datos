@@ -358,7 +358,9 @@ App.register({
       if (focusBar) { bar.focus(); bar.select(); }
     }
     const commit = (move = true) => {
+      const ref0 = sel;
       XL.cells[sel] = bar.value.trim();
+      { XL.recalc(); const raw = XL.cells[ref0], v = XL.value(ref0); if (raw && (raw.startsWith('=') || /^(SUMA|SI|PROMEDIO|BUSCARV|SUMAR|CONTAR|MAX|MIN)\b/i.test(raw))) Coach.report('excel', $('#xlGrid', sec).closest('.card'), { code: raw.replace(/^=/, ''), err: XL.isErr(v) ? `${v.e} ${v.msg || ''}` : '', where: `Celda ${ref0}: ${raw}`, okMsg: `${ref0} = ${XL.show(v)}. Selecciona la celda para ver en azul las celdas que usa la fórmula y verifica que sean las correctas.` }); }
       if (bar.value.trim().startsWith('=')) App.done('excel:first', 5, 'Primera fórmula');
       const p = XL.parseRef(sel);
       draw();

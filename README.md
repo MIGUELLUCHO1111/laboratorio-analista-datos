@@ -21,6 +21,10 @@ Todo corre en el navegador: no hay que instalar nada para practicar.
 Cada sección tiene **lecciones**, **laboratorio**, **retos autocorregidos** y **quiz**, con puntos de experiencia y niveles.
 El progreso se guarda en el navegador.
 
+## Tutor en vivo
+
+Cada vez que ejecutas código, una consulta, una fórmula, una medida DAX, una petición a la API o un comando de Git, el tutor revisa el resultado y te dice qué pasó, en qué línea está el error, cómo corregirlo y cómo darte cuenta la próxima vez. También detecta errores silenciosos (por ejemplo, una consulta sin GROUP BY que no falla pero engaña) y explica los términos técnicos que aparecen. Los términos se guardan en tu diccionario personal con tarjetas de repaso.
+
 ## Tutor IA
 
 En la versión publicada como Artifact de Claude, el botón **Tutor IA** explica temas, revisa el código del laboratorio, interpreta errores y genera ejercicios nuevos ilimitados. En esta versión web el resto de la plataforma funciona completa; el tutor muestra un aviso.
@@ -38,7 +42,8 @@ Luego abre http://localhost:8000.
 ```
 index.html      página para la web (generada desde guia.html con build.sh)
 guia.html       fuente de la página
-js/core.js      navegación, progreso, componentes y Tutor IA
+js/core.js      navegación, ruta, progreso, componentes y Tutor IA
+js/coach.js     tutor en vivo, glosario, diccionario personal y fondo galáctico
 js/data.js      datos de práctica (120 ventas, productos, vendedores)
 js/m-*.js       un archivo por sección
 ```

@@ -51,6 +51,7 @@ const SQLX = (() => {
       const r = await run(ta.value);
       if (r.err) { out.className = 'out err'; out.innerHTML = `<b>${esc(r.err)}</b>${r.hint ? '\n💡 ' + esc(r.hint) : ''}\n<button class="btn ghost sm" data-sqfix>Pedir ayuda a la IA con este error</button>`; Tutor.lastError = r.err; }
       else { out.style.fontFamily = 'var(--f-body)'; out.innerHTML = r.msg ? esc(r.msg) : tableHTML(r.cols, r.rows); App.done('sql:run', 5, 'Primera consulta ejecutada'); }
+      Coach.report('sql', c, { code: ta.value, err: r.err, res: r, ta, okMsg: `La consulta devolvió ${r.rows ? r.rows.length : 0} fila(s). Comprueba que ese número tenga sentido para la pregunta.` });
       if (c._after) c._after(r);
       return r;
     } catch (e) { out.className = 'out err'; out.textContent = 'No se pudo cargar SQLite: ' + e.message; }

@@ -159,7 +159,7 @@ const App = {
       r.dataset.theme = dark ? 'light' : 'dark';
       store.set('dl_theme', r.dataset.theme);
     };
-    const th = store.get('dl_theme', null); if (th) document.documentElement.dataset.theme = th;
+    document.documentElement.dataset.theme = store.get('dl_theme', null) || 'dark';
     $('#resetBtn').onclick = () => { $('#resetConfirm').hidden = false; };
     $('#resetNo').onclick = () => { $('#resetConfirm').hidden = true; };
     $('#resetYes').onclick = () => { this.state = { done: {}, xp: 0 }; store.set('dl_state', this.state); location.reload(); };
@@ -318,6 +318,8 @@ document.addEventListener('click', async e => {
     msg.textContent = (r.ok ? '✔ ' : '✘ ') + r.msg;
     if (r.ok) { card.classList.add('is-done'); App.done(card.dataset.ch, 20, 'Reto superado'); }
     else Tutor.lastError = `Reto "${c.t}": ${r.msg}`;
+    const cta = card.querySelector('textarea.code');
+    if (window.Coach) Coach.report('reto', card.querySelector('.chal-msg'), { sub: card.dataset.ch.split(':')[0].replace('powerbi', 'dax').replace('github', 'git'), fail: !r.ok, err: r.ok ? '' : r.msg, msg: r.msg, code: cta ? cta.value : (App.modules.find(m => m.id === App.current)?.getCode?.() || ''), ta: cta, okMsg: '¡Reto superado! Repasa por qué funcionó: explícalo con tus palabras en tu bitácora.' });
   }
 });
 
@@ -334,6 +336,14 @@ function bindEditor(ta, onRun) {
     }
     if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); onRun && onRun(); }
   });
+  if (!ta.parentElement.classList.contains('ed-wrap')) {
+    const w = document.createElement('div'); w.className = 'ed-wrap'; ta.before(w);
+    const g = document.createElement('pre'); g.className = 'gutter'; g.setAttribute('aria-hidden', 'true'); w.append(g, ta);
+    ta._gut = () => { const n = ta.value.split('\n').length; let s = ''; for (let i = 1; i <= n; i++) s += (i === ta._errLine ? `<b>${i}</b>` : i) + '\n'; g.innerHTML = s; g.scrollTop = ta.scrollTop; };
+    ta.addEventListener('input', () => { ta._errLine = null; ta._gut(); });
+    ta.addEventListener('scroll', () => { g.scrollTop = ta.scrollTop; });
+    ta._gut();
+  }
   const fit = () => { ta.style.height = 'auto'; ta.style.height = Math.min(Math.max(ta.scrollHeight + 4, 110), 520) + 'px'; };
   ta.addEventListener('input', fit); setTimeout(fit, 0);
   ta._fit = fit;
@@ -386,10 +396,11 @@ const Tutor = {
         <button class="btn ghost sm" data-tq="interview">Pregunta de entrevista</button>
       </div>
       <div class="tutor-log" id="tutorLog">
-        <div class="msg ai">Hola, soy tu tutor. Estoy al tanto de la sección en la que estás y del código que escribes en el laboratorio. Pregúntame lo que no entiendas, pídeme que revise tu código o que te ponga un ejercicio nuevo. Te guío paso a paso sin darte la respuesta de inmediato, porque así se aprende de verdad.</div>
+        <div class="msg ai">Hola, soy tu tutor y voy a la par contigo. Cada vez que ejecutas algo, lo reviso: si hay un error te digo qué pasó, en qué línea está, cómo corregirlo y qué significan los términos nuevos. Aquí verás el registro de todo lo que ejecutas. Pregúntame lo que no entiendas, pídeme que revise tu código o que te ponga un ejercicio nuevo. Te guío paso a paso sin darte la respuesta de inmediato, porque así se aprende de verdad.</div>
       </div>
       <form class="tutor-in" id="tutorForm">
         <textarea id="tutorTxt" class="inp" rows="2" placeholder="Escribe tu duda… (Enter para enviar)"></textarea>
+        <label class="ch-auto"><input type="checkbox" data-autoai> Analizar mis errores automáticamente con IA</label>
         <div class="row"><button class="btn sm" id="tutorSend" type="submit">Enviar</button><button class="btn ghost sm" type="button" id="tutorStop" hidden>Detener</button><button class="btn ghost sm" type="button" id="tutorClear">Nueva conversación</button></div>
       </form>
       <p class="tutor-off" id="tutorOff" hidden>El Tutor IA funciona cuando abres esta plataforma dentro de Claude (versión Artifact). En esta copia puedes seguir usando lecciones, laboratorios, pistas y soluciones.</p>
@@ -415,7 +426,17 @@ const Tutor = {
     try {
       if (window.claude && typeof window.claude.use === 'function') this.sample = await window.claude.use('sample');
     } catch (e) { this.sample = null; }
+    $$('[data-autoai]').forEach(x => x.checked = store.get('dl_autoai', true));
     if (!this.sample) { $('#tutorOff').hidden = false; $('#tutorQuick').hidden = true; $('#tutorForm').hidden = true; $('#tutorFab').classList.add('off'); }
+  },
+  /* El tutor registra cada ejecución en su panel: va a la par contigo */
+  logEvent(state, kind, text, loc) {
+    const log = $('#tutorLog'); if (!log) return;
+    const icon = { err: '✘', warn: '!', ok: '✔' }[state];
+    log.insertAdjacentHTML('beforeend', `<div class="msg ev ${state}"><b>${icon} ${esc(kind.toUpperCase())}</b> ${esc(text)}${loc ? ` · línea ${loc.n}` : ''}</div>`);
+    while (log.children.length > 60) log.firstElementChild.remove();
+    log.scrollTop = log.scrollHeight;
+    const fab = $('#tutorFab'); if (fab && state === 'err') { fab.classList.remove('ping'); void fab.offsetWidth; fab.classList.add('ping'); }
   },
   setContext(m) { this.mod = m; const c = $('#tutorCtx'); if (c) c.textContent = 'Sección: ' + m.title; },
   open() { $('#tutor').hidden = false; setTimeout(() => $('#tutorTxt') && $('#tutorTxt').focus(), 50); },
@@ -522,7 +543,7 @@ function countUp(el, to, suffix = '') {
   const from = +(el.dataset.v || 0); el.dataset.v = to;
   if (from === to || matchMedia('(prefers-reduced-motion: reduce)').matches) { el.textContent = to + suffix; return; }
   const t0 = performance.now(), dur = 700;
-  const step = t => { const k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3); el.textContent = Math.round(from + (to - from) * e) + suffix; if (k < 1) requestAnimationFrame(step); };
+  const step = t => { const k = Math.max(0, Math.min(1, (t - t0) / dur)), e = 1 - Math.pow(1 - k, 3); el.textContent = Math.round(from + (to - from) * e) + suffix; if (k < 1) requestAnimationFrame(step); };
   requestAnimationFrame(step);
 }
 const FX = {

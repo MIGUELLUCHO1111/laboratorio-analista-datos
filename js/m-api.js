@@ -179,6 +179,7 @@
         try { $('#apiPy', sec).innerHTML = codeBlock(pyFor(lastReq), 'py'); } catch (e) { $('#apiPy', sec).innerHTML = ''; }
         $('#apiLog', sec).innerHTML = log.slice(-8).reverse().map(r => `<div><span class="pill s${String(r.status)[0]}">${r.status}</span> <code>${r.method} ${esc(r.url.replace(BASE, ''))}</code></div>`).join('');
         if (status >= 400) Tutor.lastError = `Petición ${method} ${url} respondió ${status}: ${JSON.stringify(res)}`;
+        Coach.report('api', $('#apiRes', sec).closest('.split'), { code: `${method} ${url}\n${$('#apiH', sec).value}${method === 'POST' ? '\n' + body : ''}`, err: status >= 400 ? `${status} ${JSON.stringify(res)}` : '', status, res, where: status === 401 || status === 403 ? 'En los encabezados (X-API-Key).' : status === 404 || status === 405 ? 'En la URL o el método.' : status === 400 || status === 422 ? 'En el cuerpo JSON o los parámetros.' : '', okMsg: `Respuesta ${status}. Haz clic en los valores del JSON para ver cómo se leen desde Python.` });
       };
       $('#apiSend', sec).onclick = send;
       $('#apiU', sec).onkeydown = e => { if (e.key === 'Enter') send(); };

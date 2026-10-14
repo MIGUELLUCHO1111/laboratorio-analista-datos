@@ -188,7 +188,9 @@ Escribe "help" para ver los comandos. Empieza con: git init</pre>
       const r = GIT.run(c);
       out.textContent += `\n$ ${c}${r ? '\n' + r : ''}`;
       out.scrollTop = out.scrollHeight;
-      if (/fatal|error|no reconocido|Falta/.test(r)) Tutor.lastError = `Comando "${c}" respondió: ${r}`;
+      const bad = /fatal|error|no reconocido|Falta|nada para confirmar|no está en este simulador|no existe/.test(r);
+      if (bad) Tutor.lastError = `Comando "${c}" respondió: ${r}`;
+      Coach.report('git', out.closest('.card'), { code: c, err: bad ? r : '', okMsg: 'Comando ejecutado. Mira las cuatro zonas de arriba para ver qué cambió.' });
       drawG();
       if (GIT.S.commits.length) App.done('github:sim', 5, 'Primer commit en el simulador');
     };
@@ -308,10 +310,12 @@ App.register({
     sec.innerHTML = moduleHead(this, 'Las herramientas cambian, la lógica no. Esta tabla muestra la misma operación en cada herramienta: si entiendes una, puedes traducirla a las demás.') + `
       <div class="tblwrap" style="max-height:none"><table class="t"><thead><tr><th>Operación</th><th>Excel</th><th>SQL</th><th>Python (pandas)</th><th>Power BI (DAX)</th></tr></thead><tbody>
       ${R.map(r => `<tr><td><b>${r[0]}</b></td>${r.slice(1).map(c => `<td><code>${esc(c)}</code></td>`).join('')}</tr>`).join('')}</tbody></table></div>
+      <div class="card" id="myDict"></div>
       <div class="card"><div class="row" style="justify-content:space-between"><h3>Glosario</h3><input class="inp" id="gq" placeholder="Buscar término…" aria-label="Buscar en el glosario"></div><div id="gl" class="grid3"></div></div>`;
     const draw = q => { const n = s => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase(); $('#gl', sec).innerHTML = G.filter(g => !q || n(g[0] + g[1]).includes(n(q))).map(g => `<div><b>${g[0]}</b><p class="tcap">${g[1]}</p></div>`).join('') || '<p class="tcap">Sin resultados. Pregúntale al Tutor IA.</p>'; };
     $('#gq', sec).oninput = e => draw(e.target.value); draw('');
-  }
+  },
+  onShow() { Coach.renderDict($('#myDict')); }
 });
 
 /* ---------------- BITÁCORA ---------------- */

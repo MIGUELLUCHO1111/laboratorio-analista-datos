@@ -314,9 +314,10 @@ App.register({
         if (k >= 0) measures[k] = tmp; else measures.push(tmp);
         DAX.setMeasures(measures);
         try { DAX.evalMeasure(tmp, { f: {} }); } catch (e) { measures = prev; DAX.setMeasures(measures); throw e; }
-        saveM(); msg.className = 'chal-msg ok'; msg.textContent = `Medida “${name}” lista.`; App.done('powerbi:measure', 10, 'Primera medida DAX');
+        saveM(); msg.className = 'chal-msg ok'; msg.textContent = `Medida “${name}” lista.`;
+        Coach.report('dax', msg, { code: txt, okMsg: `La medida “${name}” se evaluó sin errores. Cambia los segmentadores y observa cómo responde al contexto de filtro.` }); App.done('powerbi:measure', 10, 'Primera medida DAX');
         mList(); dash();
-      } catch (e) { msg.className = 'chal-msg bad'; msg.textContent = '✘ ' + e.message; Tutor.lastError = `Medida DAX "${txt}": ${e.message}`; }
+      } catch (e) { msg.className = 'chal-msg bad'; msg.textContent = '✘ ' + e.message; Tutor.lastError = `Medida DAX "${txt}": ${e.message}`; Coach.report('dax', msg, { code: txt, err: e.message, where: `En la medida: ${txt}` }); }
     };
     $('#mAdd', sec).onclick = addMeasure;
     $('#mNew', sec).onkeydown = e => { if (e.key === 'Enter') addMeasure(); };
