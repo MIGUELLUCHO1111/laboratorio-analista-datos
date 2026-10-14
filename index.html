@@ -567,6 +567,66 @@ body{background:
 .dterm.known{border-color:var(--ok)}
 .fcard{border:2px solid var(--accent);border-radius:16px;padding:18px;display:grid;gap:8px;text-align:center;justify-items:center;background:var(--panel-2)}
 .fcard b{font-family:var(--f-display);font-size:26px;text-transform:uppercase}
+
+/* ================= v5: todo sincronizado con el modo galáctico ================= */
+:root[data-theme="dark"] .mhead{
+  background:
+    radial-gradient(1.2px 1.2px at 12% 22%,#fff,transparent),radial-gradient(1px 1px at 34% 68%,#cfe0ff,transparent),
+    radial-gradient(1.4px 1.4px at 58% 18%,#fff,transparent),radial-gradient(1px 1px at 72% 76%,#fff,transparent),
+    radial-gradient(1.2px 1.2px at 88% 40%,#cfe0ff,transparent),radial-gradient(1px 1px at 46% 42%,#fff,transparent),
+    radial-gradient(700px 320px at 88% 10%,color-mix(in srgb,var(--m) 42%,transparent),transparent 70%),
+    radial-gradient(520px 280px at 0% 120%,color-mix(in srgb,var(--m) 26%,transparent),transparent 70%),
+    radial-gradient(400px 240px at 55% 120%,color-mix(in srgb,#7B3CFF 22%,transparent),transparent 70%),
+    linear-gradient(135deg,#0A1030,#050918);
+  color:var(--ink);
+  border:1px solid color-mix(in srgb,var(--m) 55%,transparent);
+  box-shadow:0 0 44px color-mix(in srgb,var(--m) 22%,transparent),inset 0 0 70px color-mix(in srgb,var(--m) 10%,transparent)}
+:root[data-theme="dark"] .mhead::after{color:var(--m);opacity:.13;text-shadow:0 0 40px var(--m)}
+:root[data-theme="dark"] .mhead h1{color:#fff;text-shadow:0 0 28px color-mix(in srgb,var(--m) 65%,transparent)}
+:root[data-theme="dark"] .mhead .eyebrow{color:var(--m)!important;opacity:1}
+:root[data-theme="dark"] .mhead .eyebrow .glyph{background:var(--m);color:var(--on-m);box-shadow:0 0 14px var(--m)}
+:root[data-theme="dark"] .mhead .lead{color:var(--ink)!important;opacity:.86}
+:root[data-theme="dark"] .mhead .lead code{background:rgba(255,255,255,.08);color:var(--m)}
+:root[data-theme="dark"] .mhead .chip{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:var(--muted)}
+:root[data-theme="dark"] .mhead .chip b{color:var(--m)}
+:root[data-theme="dark"] .mwhy{background:rgba(255,255,255,.05);border:1px solid color-mix(in srgb,var(--m) 35%,transparent);color:var(--ink)}
+:root[data-theme="dark"] .mwhy b{color:var(--m)}
+:root[data-theme="dark"] .mhead .mring .bg{stroke:rgba(255,255,255,.12)}
+:root[data-theme="dark"] .mhead .mring .fg{stroke:var(--m);filter:drop-shadow(0 0 5px var(--m))}
+:root[data-theme="dark"] .mhead .mring text{fill:var(--ink)}
+
+/* pestañas: brillo de neón en lugar de bloque sólido */
+:root[data-theme="dark"] .tabs button.on{background:color-mix(in srgb,var(--m) 20%,#070C22);color:#fff;border-color:var(--m);box-shadow:0 0 0 1px var(--m),0 0 18px color-mix(in srgb,var(--m) 45%,transparent)}
+:root[data-theme="dark"] .tabs button.on .tn{background:var(--m);color:var(--on-m)}
+:root[data-theme="dark"] .tabs button:not(.on){color:var(--muted)}
+
+/* botones principales con degradado y halo */
+:root[data-theme="dark"] .btn:not(.ghost):not(.yel){background:linear-gradient(180deg,color-mix(in srgb,var(--m,var(--accent)) 100%,#fff 8%),color-mix(in srgb,var(--m,var(--accent)) 78%,#000));border-color:transparent;box-shadow:0 3px 0 color-mix(in srgb,var(--m,var(--accent)) 45%,#000),0 0 16px color-mix(in srgb,var(--m,var(--accent)) 30%,transparent)}
+:root[data-theme="dark"] .btn.ghost{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.14);color:var(--ink);box-shadow:0 3px 0 rgba(0,0,0,.4)}
+:root[data-theme="dark"] .btn.ghost:hover{background:rgba(255,255,255,.09);border-color:color-mix(in srgb,var(--m,var(--accent)) 60%,transparent)}
+
+/* lecciones, retos y tarjetas: bordes con brillo */
+:root[data-theme="dark"] details.lesson[open]{box-shadow:inset 4px 0 0 var(--m),0 0 26px color-mix(in srgb,var(--m) 14%,transparent)}
+:root[data-theme="dark"] .lnum{box-shadow:0 0 10px color-mix(in srgb,var(--m) 40%,transparent)}
+:root[data-theme="dark"] .chal.is-done{box-shadow:0 0 22px color-mix(in srgb,var(--ok) 22%,transparent)}
+:root[data-theme="dark"] .card,:root[data-theme="dark"] .chal,:root[data-theme="dark"] .q,:root[data-theme="dark"] details.lesson{border-color:rgba(140,160,255,.16)}
+:root[data-theme="dark"] .rm-node span{background:#0A1030;color:#fff}
+:root[data-theme="dark"] .rm.done .rm-node span{background:var(--m);color:var(--on-m)}
+:root[data-theme="dark"] .hn,:root[data-theme="dark"] .rm.now .rm-node{box-shadow:0 0 18px color-mix(in srgb,var(--m) 50%,transparent)}
+:root[data-theme="dark"] .nextbar{background:color-mix(in srgb,var(--m) 8%,rgba(8,12,32,.8))}
+
+/* botón del tutor, notificaciones y código */
+:root[data-theme="dark"] .tutor-fab{background:linear-gradient(135deg,#11A64B,#1E5BFF);color:#fff;box-shadow:0 0 0 1px rgba(255,255,255,.15),0 0 26px rgba(30,91,255,.55)}
+:root[data-theme="dark"] .tutor-fab .tf-dot{background:#FFD21F;box-shadow:0 0 10px #FFD21F}
+:root[data-theme="dark"] #toast{background:linear-gradient(135deg,#0E1640,#1A0F3A);color:#fff;border:1px solid rgba(140,160,255,.35);box-shadow:0 0 24px rgba(123,60,255,.45)}
+:root[data-theme="dark"] .msg.me{background:linear-gradient(135deg,#11A64B,#1E5BFF);color:#fff}
+:root[data-theme="dark"] .tutor-h{background:linear-gradient(135deg,rgba(17,166,75,.18),rgba(30,91,255,.18))}
+:root[data-theme="dark"] .editor{border-color:rgba(140,160,255,.2);box-shadow:0 0 24px rgba(30,91,255,.08)}
+:root[data-theme="dark"] .topbar{background:rgba(5,9,24,.85);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+:root[data-theme="dark"] .pill.s2{background:rgba(75,224,138,.14)} :root[data-theme="dark"] .pill.s4{background:rgba(255,210,31,.12)} :root[data-theme="dark"] .pill.s5{background:rgba(255,77,94,.14)}
+:root[data-theme="dark"] .note{background:rgba(255,255,255,.04)}
+:root[data-theme="dark"] code{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.1)}
+:root[data-theme="dark"] table.t th{background:rgba(20,28,56,.95)}
 </style>
 
 <div class="app">
@@ -597,16 +657,16 @@ body{background:
 <canvas id="fx" aria-hidden="true"></canvas>
 <div class="lvlup" id="lvlup" role="status" aria-live="polite"><small>¡Subiste de nivel!</small><b id="lvlupName"></b></div>
 
-<script src="js/core.js?v=1792004466"></script>
-<script src="js/coach.js?v=1792004466"></script>
-<script src="js/data.js?v=1792004466"></script>
-<script src="js/m-inicio.js?v=1792004466"></script>
-<script src="js/m-scraping.js?v=1792004466"></script>
-<script src="js/m-api.js?v=1792004466"></script>
-<script src="js/m-python.js?v=1792004466"></script>
-<script src="js/m-sql.js?v=1792004466"></script>
-<script src="js/m-excel.js?v=1792004466"></script>
-<script src="js/m-powerbi.js?v=1792004466"></script>
-<script src="js/m-extra.js?v=1792004466"></script>
+<script src="js/core.js?v=1792004711"></script>
+<script src="js/coach.js?v=1792004711"></script>
+<script src="js/data.js?v=1792004711"></script>
+<script src="js/m-inicio.js?v=1792004711"></script>
+<script src="js/m-scraping.js?v=1792004711"></script>
+<script src="js/m-api.js?v=1792004711"></script>
+<script src="js/m-python.js?v=1792004711"></script>
+<script src="js/m-sql.js?v=1792004711"></script>
+<script src="js/m-excel.js?v=1792004711"></script>
+<script src="js/m-powerbi.js?v=1792004711"></script>
+<script src="js/m-extra.js?v=1792004711"></script>
 <script>App.start();</script>
 </body></html>
