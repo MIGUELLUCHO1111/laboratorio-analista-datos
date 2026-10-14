@@ -1,0 +1,296 @@
+<title>Laboratorio del Analista de Datos</title>
+<meta name="description" content="Plataforma interactiva para aprender Web Scraping, APIs, Python, SQL, Excel y Power BI practicando.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=JetBrains+Mono:wght@400;600&family=Source+Sans+3:wght@400;600;700&display=swap">
+<style>
+/* Layout: cuaderno de laboratorio — barra lateral fija con la ruta de estudio; área de trabajo amplia con lecciones, laboratorio y retos por módulo */
+:root{
+  --bg:#F4F6F4; --panel:#FFFFFF; --panel-2:#E8EEEB; --ink:#14201C; --muted:#55645E; --line:#D3DDD8;
+  --accent:#0F6E38; --on-accent:#FFFFFF;
+  --ok:#1C7A4B; --bad:#B3261E; --warn:#9A6200;
+  --ok-bg:#E1F2E8; --bad-bg:#FBE6E3; --warn-bg:#FAEFD7;
+  --c-fund:#0F6E38; --c-scr:#C8102E; --c-api:#0040E6; --c-py:#F2C200; --c-sql:#0A6CFF; --c-xl:#14803F; --c-bi:#F2C200; --c-proj:#C8102E; --c-git:#B00D28; --c-tool:#0F6E38;
+  --c-yel-t:#7A5C00; --on-yel:#1A1600;
+  --on-m:#FFFFFF;
+  --code-bg:#13201C; --code-ink:#DCE8E3; --code-muted:#7E948C; --code-key:#7FD4B8; --code-str:#F0C674;
+  --hl:#FFE36B;
+  --f-display:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;
+  --f-body:'Source Sans 3','Segoe UI',system-ui,sans-serif;
+  --f-mono:'JetBrains Mono',Consolas,'Courier New',monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0D1311; --panel:#141C19; --panel-2:#1B2521; --ink:#E3ECE8; --muted:#95A69F; --line:#27342F;
+    --accent:#3FCB72; --on-accent:#05120E;
+    --ok:#4FC786; --bad:#F28479; --warn:#E3B04A;
+    --ok-bg:#11301F; --bad-bg:#3A1613; --warn-bg:#352610;
+    --c-fund:#3FCB72; --c-scr:#FF4D5E; --c-api:#5B8CFF; --c-py:#FFD21F; --c-sql:#3FA2FF; --c-xl:#46C978; --c-bi:#FFD21F; --c-proj:#FF4D5E; --c-git:#FF6B7A; --c-tool:#3FCB72;
+    --c-yel-t:#FFD21F;
+    --on-m:#06100D;
+    --code-bg:#09100E; --hl:#6B5A12;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0D1311; --panel:#141C19; --panel-2:#1B2521; --ink:#E3ECE8; --muted:#95A69F; --line:#27342F;
+  --accent:#3FCB72; --on-accent:#05120E;
+  --ok:#4FC786; --bad:#F28479; --warn:#E3B04A;
+  --ok-bg:#11301F; --bad-bg:#3A1613; --warn-bg:#352610;
+  --c-fund:#3FCB72; --c-scr:#FF4D5E; --c-api:#5B8CFF; --c-py:#FFD21F; --c-sql:#3FA2FF; --c-xl:#46C978; --c-bi:#FFD21F; --c-proj:#FF4D5E; --c-git:#FF6B7A; --c-tool:#3FCB72;
+    --c-yel-t:#FFD21F;
+  --on-m:#06100D;
+  --code-bg:#09100E; --hl:#6B5A12;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+/* módulos con amarillo fuerte: texto oscuro sobre el amarillo y un tono legible para letras */
+[style*="--c-py"],[style*="--c-bi"]{--on-m:var(--on-yel);--m-t:var(--c-yel-t)}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.55;margin:0}
+h1,h2,h3,h4{font-family:var(--f-display);line-height:1.15;text-wrap:balance;margin:0}
+p{margin:0}
+code,kbd,pre,textarea.code{font-family:var(--f-mono)}
+a{color:var(--accent)}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+
+/* ---------- estructura ---------- */
+.app{display:grid;grid-template-columns:268px minmax(0,1fr);min-height:100%}
+.side{position:sticky;top:env(safe-area-inset-top,0px);height:100vh;overflow-y:auto;background:var(--panel);border-right:1px solid var(--line);padding:20px 14px;display:flex;flex-direction:column;gap:18px}
+.brand{display:flex;gap:10px;align-items:center;padding:0 6px}
+.brand-mark{width:38px;height:38px;border-radius:9px;background:var(--accent);color:var(--on-accent);display:grid;place-items:center;font-family:var(--f-mono);font-weight:600;font-size:13px}
+.brand b{font-family:var(--f-display);font-size:17px;display:block;line-height:1.1}
+.brand small{color:var(--muted);font-size:12.5px}
+.xpbox{border:1px solid var(--line);border-radius:var(--r);padding:12px;display:grid;gap:6px;background:var(--panel-2)}
+.xpbox .lvl{display:flex;justify-content:space-between;font-size:13px;color:var(--muted)}
+.xpbox .lvl b{color:var(--ink);font-family:var(--f-display);font-size:15px}
+.bar{height:7px;background:var(--line);border-radius:9px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:9px;transition:width .5s}
+.nav{display:grid;gap:2px}
+.nav-group{font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);padding:12px 8px 4px;font-weight:700}
+.nav button{display:grid;grid-template-columns:30px 1fr auto;gap:10px;align-items:center;width:100%;text-align:left;background:none;border:0;color:var(--ink);padding:7px 8px;border-radius:8px;font-size:15px}
+.nav button:hover{background:var(--panel-2)}
+.nav button.active{background:var(--panel-2);box-shadow:inset 3px 0 0 var(--m)}
+.glyph{width:30px;height:30px;border-radius:7px;background:var(--m);color:var(--on-m);display:grid;place-items:center;font-family:var(--f-mono);font-size:11px;font-weight:600;letter-spacing:-.02em}
+.ring{width:22px;height:22px}
+.ring circle{fill:none;stroke-width:3}
+.ring .bg{stroke:var(--line)} .ring .fg{stroke:var(--m);stroke-linecap:round;transition:stroke-dasharray .5s}
+.side-foot{margin-top:auto;display:grid;gap:8px;font-size:13px;color:var(--muted);padding:0 6px}
+.linkbtn{background:none;border:0;color:var(--muted);text-decoration:underline;padding:0;font-size:13px;text-align:left}
+.topbar{display:none}
+main{padding-inline:clamp(16px,4vw,48px);padding-block:28px 80px;min-width:0}
+.section{max-width:1120px;margin:0 auto;display:grid;gap:26px}
+.section[hidden]{display:none!important}
+.section>*,.pane>*,.lessons>*,.chals>*,.card>*,.grid2>*,.grid3>*,.split>*,.lesson-body>*,.chal>*{min-width:0}
+
+@media (max-width: 900px){
+  .app{grid-template-columns:minmax(0,1fr)}
+  .side{position:fixed;inset:0 auto 0 0;width:min(300px,86vw);z-index:40;transform:translateX(-102%);transition:transform .25s;height:100%;padding-top:calc(20px + env(safe-area-inset-top,0px))}
+  .side.open{transform:none;box-shadow:0 0 0 100vmax rgba(0,0,0,.35)}
+  .topbar{display:flex;position:sticky;top:env(safe-area-inset-top,0px);z-index:30;align-items:center;gap:12px;background:var(--panel);border-bottom:1px solid var(--line);padding:10px 16px}
+  .topbar b{font-family:var(--f-display)}
+  .topbar .xp-mini{margin-left:auto;font-size:13px;color:var(--muted)}
+  main{padding-block:20px 60px}
+}
+
+/* ---------- cabecera de módulo ---------- */
+.mhead{display:grid;gap:12px;padding-block:6px 4px;border-bottom:1px solid var(--line);padding-bottom:22px}
+.eyebrow{display:flex;gap:10px;align-items:center;font-size:12.5px;letter-spacing:.09em;text-transform:uppercase;font-weight:700;color:var(--m-t,var(--m))}
+.mhead h1{font-size:clamp(30px,4.6vw,48px);font-weight:800;letter-spacing:-.02em}
+.mhead .lead{font-size:18px;color:var(--muted);max-width:68ch}
+.mstats{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:13px;border:1px solid var(--line);border-radius:99px;padding:3px 11px;background:var(--panel);color:var(--muted)}
+.chip b{color:var(--ink)}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:8px}
+@media (max-width:900px){.tabs{top:calc(env(safe-area-inset-top,0px) + 55px)}}
+.tabs button{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:99px;padding:6px 15px;font-size:14.5px;font-weight:600}
+.tabs button.on{background:var(--m);border-color:var(--m);color:var(--on-m)}
+.pane{display:grid;gap:18px}
+.pane[hidden]{display:none!important}
+h2.st{font-size:24px;font-weight:700;letter-spacing:-.01em}
+h3{font-size:19px;font-weight:700}
+.sub{color:var(--muted);max-width:72ch}
+
+/* ---------- tarjetas, botones ---------- */
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:18px;display:grid;gap:12px;min-width:0}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:14px}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.btn{border:1px solid var(--m,var(--accent));background:var(--m,var(--accent));color:var(--on-m);border-radius:8px;padding:7px 14px;font-weight:600;font-size:14.5px;display:inline-flex;gap:6px;align-items:center}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.btn.ghost:hover{background:var(--panel-2)}
+.btn.sm{padding:4px 10px;font-size:13px}
+.btn:disabled{opacity:.5;cursor:default}
+.kbd,kbd{font-family:var(--f-mono);font-size:12px;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:0 5px;background:var(--panel-2)}
+code{font-size:.88em;background:var(--panel-2);border:1px solid var(--line);border-radius:5px;padding:0 5px}
+.note{border-left:3px solid var(--m,var(--accent));background:var(--panel-2);padding:10px 14px;border-radius:0 8px 8px 0;font-size:15px}
+.note.warn{border-color:var(--warn);background:var(--warn-bg)}
+ul.clean{margin:0;padding-left:20px;display:grid;gap:4px}
+.muted{color:var(--muted)}
+.tag{font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--m-t,var(--m))}
+
+/* ---------- lecciones ---------- */
+.lessons{display:grid;gap:10px}
+details.lesson{background:var(--panel);border:1px solid var(--line);border-radius:var(--r)}
+details.lesson summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:34px 1fr auto;gap:12px;align-items:center;padding:13px 16px}
+details.lesson summary::-webkit-details-marker{display:none}
+.lnum{width:34px;height:34px;border-radius:50%;border:2px solid var(--m);display:grid;place-items:center;font-family:var(--f-mono);font-weight:600;font-size:13px;color:var(--m-t,var(--m))}
+details.lesson.done .lnum{background:var(--m);color:var(--on-m)}
+details.lesson summary h3{font-size:17.5px}
+details.lesson summary small{display:block;color:var(--muted);font-size:13.5px;font-family:var(--f-body);font-weight:400;margin-top:2px}
+.chev{transition:transform .2s;color:var(--muted)}
+details[open] .chev{transform:rotate(90deg)}
+.lesson-body{padding:4px 18px 18px 62px;display:grid;gap:14px;min-width:0}
+@media (max-width:600px){.lesson-body{padding:4px 14px 16px}}
+.lesson-body > p{max-width:72ch}
+
+/* ---------- código y editor ---------- */
+pre.code{background:var(--code-bg);color:var(--code-ink);border-radius:8px;padding:14px 16px;margin:0;overflow-x:auto;font-size:13.5px;line-height:1.6;tab-size:4}
+pre.code .c{color:var(--code-muted)} pre.code .k{color:var(--code-key)} pre.code .s{color:var(--code-str)}
+.editor{display:grid;border-radius:9px;overflow:hidden;border:1px solid var(--line);min-width:0}
+.editor-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:var(--panel-2);padding:7px 10px;border-bottom:1px solid var(--line);font-size:13px;color:var(--muted)}
+.editor-bar .sp{margin-left:auto}
+textarea.code{width:100%;min-height:120px;resize:vertical;border:0;background:var(--code-bg);color:var(--code-ink);padding:14px 16px;font-size:14px;line-height:1.6;tab-size:4;outline:none;white-space:pre;overflow-x:auto}
+textarea.code:focus{box-shadow:inset 0 0 0 2px var(--m,var(--accent))}
+.out{background:var(--panel);border-top:1px solid var(--line);padding:12px 16px;font-family:var(--f-mono);font-size:13.5px;white-space:pre-wrap;word-break:break-word;min-height:44px;max-height:340px;overflow:auto}
+.out.err{color:var(--bad);background:var(--bad-bg)}
+.out .dim{color:var(--muted)}
+input.inp,select.inp,textarea.inp{font:inherit;font-size:15px;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:7px 10px;min-width:0}
+input.inp.mono{font-family:var(--f-mono);font-size:14px}
+
+/* ---------- tablas ---------- */
+.tblwrap{overflow:auto;border:1px solid var(--line);border-radius:8px;max-height:420px;background:var(--panel)}
+table.t{border-collapse:collapse;width:100%;font-size:14px;font-variant-numeric:tabular-nums}
+table.t th{position:sticky;top:0;background:var(--panel-2);text-align:left;font-weight:700;padding:7px 10px;border-bottom:1px solid var(--line);white-space:nowrap;font-size:13px}
+table.t td{padding:6px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+table.t td.n{text-align:right}
+table.t tr:last-child td{border-bottom:0}
+.tcap{font-size:13px;color:var(--muted)}
+
+/* ---------- quiz ---------- */
+.quiz{display:grid;gap:14px}
+.q{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:grid;gap:10px}
+.q-t{font-weight:600}
+.opts{display:grid;gap:7px}
+.opt{text-align:left;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:8px;padding:9px 12px;font-size:15px}
+.opt:hover:not(:disabled){border-color:var(--m)}
+.opt.ok{border-color:var(--ok);background:var(--ok-bg);color:var(--ink)}
+.opt.bad{border-color:var(--bad);background:var(--bad-bg);color:var(--ink)}
+.opt:disabled{cursor:default}
+.why{font-size:14.5px;color:var(--muted)}
+
+/* ---------- retos ---------- */
+.chals{display:grid;gap:12px}
+.chal{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:grid;gap:10px;min-width:0}
+.chal-h{display:flex;gap:10px;align-items:center}
+.chal-st{width:22px;height:22px;border-radius:50%;border:2px dashed var(--muted);flex:none;display:grid;place-items:center;font-size:12px}
+.chal.is-done{border-color:var(--ok)}
+.chal.is-done .chal-st{border:0;background:var(--ok);color:var(--panel)}
+.chal.is-done .chal-st::after{content:"✓";font-weight:700}
+.chal h4{font-size:16.5px}
+.chal-hint{font-size:14.5px;background:var(--warn-bg);border-radius:8px;padding:8px 12px}
+.chal-msg{font-size:14.5px;font-weight:600}
+.chal-msg.ok{color:var(--ok)} .chal-msg.bad{color:var(--bad)}
+
+/* ---------- toast ---------- */
+#toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(calc(100% + 60px));visibility:hidden;background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:99px;font-weight:600;font-size:14.5px;transition:transform .3s;z-index:60;max-width:calc(100vw - 32px);text-align:center}
+#toast.show{transform:translateX(-50%) translateY(0);visibility:visible}
+
+/* ---------- inicio ---------- */
+.hero{display:grid;gap:16px;padding-block:8px 6px}
+.hero h1{font-size:clamp(34px,5.8vw,62px);font-weight:800;letter-spacing:-.03em;max-width:17ch}
+.hero h1 em{font-style:normal;color:var(--accent)}
+.pipeline{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--panel)}
+@media (max-width:760px){.pipeline{grid-template-columns:minmax(0,1fr)}}
+.pstage{padding:16px;border-right:1px solid var(--line);display:grid;gap:8px;align-content:start;position:relative}
+.pstage:last-child{border-right:0}
+@media (max-width:760px){.pstage{border-right:0;border-bottom:1px solid var(--line)}.pstage:last-child{border-bottom:0}}
+.pstage .pn{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.pstage h3{font-size:17px}
+.pstage p{font-size:14px;color:var(--muted)}
+.pstage .row{gap:6px}
+.mbtn{border:0;border-radius:7px;padding:4px 10px;font-size:13px;font-weight:700;background:var(--m);color:var(--on-m)}
+.modcard{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:grid;gap:10px;text-align:left;color:var(--ink);font:inherit;cursor:pointer}
+.modcard:hover{border-color:var(--m)}
+.modcard .top{display:flex;gap:10px;align-items:center}
+.modcard h3{font-size:17px}
+.modcard p{font-size:14px;color:var(--muted)}
+.modcard .bar i{background:var(--m)}
+.modcard .pc{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+
+/* ---------- utilidades varias de los laboratorios ---------- */
+.split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+@media (max-width:900px){.split{grid-template-columns:minmax(0,1fr)}}
+.pill{display:inline-block;font-family:var(--f-mono);font-size:12.5px;font-weight:600;border-radius:6px;padding:2px 8px}
+.pill.s2{background:var(--ok-bg);color:var(--ok)} .pill.s4{background:var(--warn-bg);color:var(--warn)} .pill.s5{background:var(--bad-bg);color:var(--bad)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:14.5px}
+.kv dt{color:var(--muted)} .kv dd{margin:0}
+.flow{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.flow .fstep{border:1px solid var(--line);background:var(--panel-2);border-radius:8px;padding:6px 11px;font-size:14px}
+.flow .arr{color:var(--muted)}
+.big{font-family:var(--f-display);font-size:34px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1}
+mark{background:var(--hl);color:inherit;border-radius:3px;padding:0 2px}
+svg text{font-family:var(--f-body)}
+
+/* ---------- Tutor IA ---------- */
+.tutor-fab{position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:50;border:0;border-radius:99px;background:var(--ink);color:var(--bg);padding:11px 18px;font-weight:700;font-size:15px;display:flex;gap:8px;align-items:center;box-shadow:0 6px 20px rgba(0,0,0,.18)}
+.tf-dot{width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 35%,transparent)}
+.tutor-fab.off .tf-dot{background:var(--muted);box-shadow:none}
+.tutor{position:fixed;right:18px;bottom:calc(76px + env(safe-area-inset-bottom,0px));z-index:55;width:min(420px,calc(100vw - 32px));height:min(620px,calc(100% - 110px));background:var(--panel);border:1px solid var(--line);border-radius:14px;box-shadow:0 18px 50px rgba(0,0,0,.22);display:flex;flex-direction:column;overflow:hidden}
+.tutor[hidden]{display:none!important}
+@media (max-width:600px){.tutor{right:16px;left:16px;width:auto}}
+.tutor-h{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid var(--line);background:var(--panel-2)}
+.tutor-h b{font-family:var(--f-display);font-size:17px;display:block}
+.tutor-h small{color:var(--muted);font-size:12.5px}
+.tutor-quick{display:flex;flex-wrap:wrap;gap:6px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.tutor-quick[hidden],.tutor-in[hidden]{display:none!important}
+.tutor-log{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px}
+.msg{padding:9px 12px;border-radius:12px;font-size:14.5px;max-width:92%;overflow-wrap:anywhere}
+.msg.ai{background:var(--panel-2);align-self:flex-start;border-bottom-left-radius:3px}
+.msg.me{background:var(--accent);color:var(--on-accent);align-self:flex-end;border-bottom-right-radius:3px}
+.msg pre.code{font-size:12.5px;margin:6px 0;white-space:pre}
+.msg hr{border:0;border-top:1px solid var(--line)}
+.tutor-in{display:grid;gap:8px;padding:10px 12px;border-top:1px solid var(--line)}
+.tutor-in textarea{resize:none;width:100%}
+.tutor-off{padding:12px 14px;font-size:14px;color:var(--muted);border-top:1px solid var(--line)}
+</style>
+
+<div class="app">
+  <header class="topbar">
+    <button class="btn ghost sm" id="menuBtn" aria-label="Abrir menú">☰ Menú</button>
+    <b>Laboratorio del Analista</b>
+    <span class="xp-mini" id="xpMini">0 XP</span>
+  </header>
+  <aside class="side" id="side">
+    <div class="brand"><div class="brand-mark">DA</div><div><b>Laboratorio del Analista</b><small>Ruta práctica de datos</small></div></div>
+    <div class="xpbox">
+      <div class="lvl"><span>Nivel</span><b id="lvlName">Aprendiz</b></div>
+      <div class="bar"><i id="lvlBar" style="width:0%"></i></div>
+      <div class="lvl"><span id="xpTxt">0 XP</span><span id="lvlNext">próximo: 100</span></div>
+    </div>
+    <nav class="nav" id="nav"></nav>
+    <div class="side-foot">
+      <button class="linkbtn" id="themeBtn">Cambiar tema claro/oscuro</button>
+      <button class="linkbtn" id="resetBtn">Reiniciar mi progreso</button>
+      <span id="resetConfirm" hidden>¿Seguro? <button class="linkbtn" id="resetYes">Sí, borrar</button> · <button class="linkbtn" id="resetNo">No</button></span>
+    </div>
+  </aside>
+  <main id="main"></main>
+</div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script src="js/core.js"></script>
+<script src="js/data.js"></script>
+<script src="js/m-inicio.js"></script>
+<script src="js/m-scraping.js"></script>
+<script src="js/m-api.js"></script>
+<script src="js/m-python.js"></script>
+<script src="js/m-sql.js"></script>
+<script src="js/m-excel.js"></script>
+<script src="js/m-powerbi.js"></script>
+<script src="js/m-extra.js"></script>
+<script>App.start();</script>
