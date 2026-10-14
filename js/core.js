@@ -118,6 +118,7 @@ const App = {
     if (m.onShow) m.onShow();
     Tutor.setContext(m);
     this.mentorGate(m);
+    if (typeof pfReminder === 'function') pfReminder(m);
   },
   /* Si saltas un paso, el mentor te dice qué falta y por qué conviene seguir el orden */
   mentorGate(m) {

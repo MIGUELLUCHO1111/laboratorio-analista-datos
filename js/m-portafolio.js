@@ -1,4 +1,32 @@
 /* ===== Mi portafolio: proyectos reales en GitHub ===== */
+
+/* Recordatorio: al entrar a un paso con proyecto, avisa que hagas su "Tu turno" */
+const PF_LINK = {
+  excel: ['01', 'Reporte de ventas en Excel', 5], sql: ['02', 'Análisis de ventas con SQL', 5],
+  python: ['03', 'Análisis exploratorio con Python', 5], api: ['04', 'APIs y Web Scraping', 4],
+  scraping: ['04', 'APIs y Web Scraping', 4], powerbi: ['05', 'Dashboard en Power BI', 5]
+};
+function pfReminder(m) {
+  const sec = $('#sec-' + m.id); if (!sec) return;
+  $$('.pf-remind', sec).forEach(x => x.remove());
+  const link = PF_LINK[m.id]; if (!link) return;
+  const [n, titulo, total] = link;
+  const hechas = Array.from({ length: total }, (_, i) => `pf:${n}:${i}`).filter(id => App.isDone(id)).length;
+  if (hechas === total || store.get('dl_pf_rem', {})[m.id]) return;
+  const head = sec.querySelector('.mhead'); if (!head) return;
+  const gate = sec.querySelector('.mentor-gate');
+  (gate || head).insertAdjacentHTML('afterend', `<div class="mentor pf-remind" style="border-left-color:var(--m)"><span class="mavatar">⭐</span><div>
+    <b>Recordatorio de tu portafolio · Proyecto ${n}</b>
+    <p>Mientras estudias este paso, haz también el <b>“Tu turno” de ${esc(titulo)}</b> (${hechas} de ${total} tareas hechas). Así practicas con un proyecto real y lo subes a tu GitHub.</p>
+    <div class="row"><button class="btn sm" data-goto="portafolio">Ver las tareas</button><button class="btn ghost sm" data-pfrem="${m.id}">Recordármelo después</button></div></div></div>`);
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-pfrem]'); if (!b) return;
+  const r = store.get('dl_pf_rem', {}); r[b.dataset.pfrem] = Date.now(); store.set('dl_pf_rem', r);
+  b.closest('.pf-remind').remove(); toast('Te lo recordaré la próxima vez que abras la plataforma');
+});
+/* "Recordármelo después" dura solo la sesión actual del navegador */
+try { if (!sessionStorage.getItem('dl_pf_rem_s')) { store.set('dl_pf_rem', {}); sessionStorage.setItem('dl_pf_rem_s', '1'); } } catch (e) { }
 App.register({
   id: 'portafolio', group: 'Recursos', title: 'Mi portafolio', glyph: 'PF', color: '--c-proj',
   desc: 'Tus proyectos reales en GitHub: Excel, SQL, Python, APIs, Power BI y dashboard web.',
