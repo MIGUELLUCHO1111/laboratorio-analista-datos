@@ -155,11 +155,13 @@ const App = {
     $('#menuBtn').onclick = () => $('#side').classList.toggle('open');
     $('#themeBtn').onclick = () => {
       const r = document.documentElement;
-      const dark = r.dataset.theme ? r.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
-      r.dataset.theme = dark ? 'light' : 'dark';
-      store.set('dl_theme', r.dataset.theme);
+      const g = !r.classList.contains('galaxy');
+      r.classList.toggle('galaxy', g); r.dataset.theme = g ? 'dark' : 'light';
+      store.set('dl_theme', g ? 'dark' : 'light');
     };
-    document.documentElement.dataset.theme = store.get('dl_theme', null) || 'dark';
+    const gal = store.get('dl_theme', 'dark') !== 'light';
+    document.documentElement.classList.toggle('galaxy', gal);
+    document.documentElement.dataset.theme = gal ? 'dark' : 'light';
     $('#resetBtn').onclick = () => { $('#resetConfirm').hidden = false; };
     $('#resetNo').onclick = () => { $('#resetConfirm').hidden = true; };
     $('#resetYes').onclick = () => { this.state = { done: {}, xp: 0 }; store.set('dl_state', this.state); location.reload(); };
