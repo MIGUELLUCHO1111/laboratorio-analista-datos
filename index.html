@@ -674,6 +674,32 @@ body{background:
   color-scheme:dark}
 :root.galaxy main{background-image:none}
 :root:not(.galaxy) #stars{display:none}
+
+/* ---------- Esenciales ---------- */
+.ess{display:grid;gap:14px}
+.ess-head{display:flex;gap:16px;justify-content:space-between;align-items:flex-start;flex-wrap:wrap}
+.ess-count{display:grid;justify-items:end;border:1px solid var(--m);border-radius:14px;padding:8px 14px;box-shadow:0 0 16px color-mix(in srgb,var(--m) 25%,transparent)}
+.ess-count b{font-family:var(--f-display);font-size:30px;color:var(--m-t,var(--m));line-height:1}
+.ess-count span{font-size:12px;color:var(--muted)}
+.ess-cats{display:flex;flex-wrap:wrap;gap:6px}
+.chip-btn{border:1px solid var(--line);background:var(--glass);color:var(--ink);border-radius:99px;padding:4px 12px;font-size:13px;font-weight:600}
+.chip-btn:hover{border-color:var(--m);color:var(--m-t,var(--m))}
+[data-essonly].on{border-color:var(--m)}
+.ess-sec{display:grid;gap:8px;scroll-margin-top:70px}
+.ess-sec h3{font-size:15px;color:var(--m-t,var(--m));letter-spacing:.06em}
+.ess-list{display:grid;gap:6px}
+.ess-item{border:1px solid var(--line);border-radius:12px;background:var(--glass)}
+.ess-item[hidden]{display:none}
+.ess-item summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:minmax(120px,220px) minmax(0,1fr) auto;gap:12px;align-items:center;padding:9px 12px}
+.ess-item summary::-webkit-details-marker{display:none}
+.ess-n{font-weight:700}
+.ess-s{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--m-t,var(--m));background:transparent;border:0}
+.ess-ok{width:22px;height:22px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-size:12px;color:transparent}
+.ess-item.known{border-color:color-mix(in srgb,var(--ok) 55%,transparent)}
+.ess-item.known .ess-ok{background:var(--ok);border-color:var(--ok);color:#03120A}
+.ess-item[open]{border-color:var(--m);box-shadow:0 0 18px color-mix(in srgb,var(--m) 16%,transparent)}
+.ess-b{padding:0 12px 12px;display:grid;gap:8px}
+@media (max-width:640px){.ess-item summary{grid-template-columns:minmax(0,1fr) auto}.ess-s{grid-column:1/2}}
 </style>
 
 <div class="app">
@@ -704,16 +730,19 @@ body{background:
 <canvas id="fx" aria-hidden="true"></canvas>
 <div class="lvlup" id="lvlup" role="status" aria-live="polite"><small>¡Subiste de nivel!</small><b id="lvlupName"></b></div>
 
-<script src="js/core.js?v=1792006625"></script>
-<script src="js/coach.js?v=1792006625"></script>
-<script src="js/data.js?v=1792006625"></script>
-<script src="js/m-inicio.js?v=1792006625"></script>
-<script src="js/m-scraping.js?v=1792006625"></script>
-<script src="js/m-api.js?v=1792006625"></script>
-<script src="js/m-python.js?v=1792006625"></script>
-<script src="js/m-sql.js?v=1792006625"></script>
-<script src="js/m-excel.js?v=1792006625"></script>
-<script src="js/m-powerbi.js?v=1792006625"></script>
-<script src="js/m-extra.js?v=1792006625"></script>
+<script src="js/core.js?v=1792008111"></script>
+<script src="js/coach.js?v=1792008111"></script>
+<script src="js/esenciales.js?v=1792008111"></script>
+<script src="js/data.js?v=1792008111"></script>
+<script src="js/m-inicio.js?v=1792008111"></script>
+<script src="js/m-scraping.js?v=1792008111"></script>
+<script src="js/m-api.js?v=1792008111"></script>
+<script src="js/m-python.js?v=1792008111"></script>
+<script src="js/m-sql.js?v=1792008111"></script>
+<script src="js/m-excel.js?v=1792008111"></script>
+<script src="js/m-powerbi.js?v=1792008111"></script>
+<script src="js/m-ia.js?v=1792008111"></script>
+<script src="js/m-extra.js?v=1792008111"></script>
+<script src="js/m-portafolio.js?v=1792008111"></script>
 <script>App.start();</script>
 </body></html>

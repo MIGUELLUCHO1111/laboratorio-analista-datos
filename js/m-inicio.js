@@ -10,7 +10,7 @@ App.register({
       ['Semana 5', 'Paso 4', 'Python: variables, listas, diccionarios, bucles, funciones y análisis.'],
       ['Semana 6', 'Pasos 5 y 6', 'APIs y JSON, luego Web Scraping con selectores.'],
       ['Semana 7', 'Paso 7', 'Power BI: Power Query, modelo estrella, DAX y tablero.'],
-      ['Semana 8', 'Pasos 8 y 9', 'GitHub y proyecto integrador: tu primer proyecto de portafolio.']
+      ['Semana 8', 'Pasos 8, 9 y 10', 'GitHub, automatización con IA y proyecto integrador. Completa los “Tu turno” de tu portafolio.']
     ];
     const how = [
       ['Aprende', 'Lecciones cortas. Marca “Lo entendí” solo cuando puedas explicarlo con tus palabras.', '--c-fund'],
@@ -29,12 +29,12 @@ App.register({
           <div class="term-bar"><i></i><i></i><i></i><span id="termLang" class="term-lang">SQL</span></div>
           <code><span class="pr">&gt;</span> <span id="termCode"></span><span class="cur"></span></code>
         </div>
-        <p class="lead">Pipeline completo de análisis: extracción con APIs y scraping, transformación con Python y Power Query, consultas SQL, modelado DAX y visualización en Power BI. 9 módulos en secuencia, laboratorios ejecutables y validación automática de cada reto.</p>
+        <p class="lead">Pipeline completo de análisis: extracción con APIs y scraping, transformación con Python y Power Query, consultas SQL, modelado DAX, visualización en Power BI y automatización con IA. 10 módulos en secuencia, laboratorios ejecutables y validación automática de cada reto.</p>
         <div class="row">
           <button class="btn big yel" data-continue data-goto="fundamentos">▶ Continuar · <b>Paso 1</b></button>
           <button class="btn ghost light" data-goto="herramientas">Qué debo instalar</button>
         </div>
-        <div class="kpis"><div><b id="kSteps">9</b><span>pasos</span></div><div><b id="kLes">0</b><span>lecciones</span></div><div><b id="kCh">0</b><span>retos y preguntas</span></div><div><b id="kDone">0</b><span>completados</span></div></div>
+        <div class="kpis"><div><b id="kSteps">10</b><span>pasos</span></div><div><b id="kLes">0</b><span>lecciones</span></div><div><b id="kCh">0</b><span>retos y preguntas</span></div><div><b id="kDone">0</b><span>completados</span></div></div>
       </div>
       <div class="mission" id="mission" tabindex="-1"></div>
     </div>

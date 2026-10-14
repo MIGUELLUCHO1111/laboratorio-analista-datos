@@ -23,6 +23,7 @@ const ROUTE = [
   ['scraping', 'Cuando una web no ofrece API, extraes los datos de su HTML. Requiere Python y entender las peticiones que viste en APIs.'],
   ['powerbi', 'Ya sabes obtener, limpiar y consultar datos. Ahora los modelas y los conviertes en tableros que cuentan una historia para decidir.'],
   ['github', 'Guarda tu trabajo con historial y muéstralo. Tu GitHub es tu portafolio frente a los reclutadores.'],
+  ['ia', 'Con la base técnica completa, aprendes a multiplicar tu productividad: reconocer los tipos de IA, pedirle bien las cosas, usarla con responsabilidad y automatizar procesos repetitivos.'],
   ['proyecto', 'La prueba final: preguntas de negocio reales que resuelves combinando todo, como en un trabajo de analista.']
 ];
 const DONE_PCT = 80;
@@ -145,6 +146,7 @@ const App = {
       sec.className = 'section'; sec.id = 'sec-' + m.id; sec.hidden = true;
       sec.style.setProperty('--m', `var(${m.color})`);
       $('#main').appendChild(sec);
+      App._rm = m.id;
       try { m.render(sec); } catch (e) { sec.innerHTML = `<div class="note warn">Error al cargar este módulo: ${esc(e.message)}</div>`; console.error(e); }
     }
     nav.addEventListener('click', e => { const b = e.target.closest('[data-go]'); if (b) this.go(b.dataset.go); });
@@ -201,9 +203,16 @@ function moduleHead(m, lead, extra = '') {
 
 /* Pestañas dentro de un módulo: tabs = [{id,label}] ; devuelve html. Activar con bindTabs(root) */
 function tabsHTML(tabs) {
+  if (typeof ESS !== 'undefined' && ESS[App._rm] && !tabs.some(t => t.id === 'kit')) tabs = [tabs[0], { id: 'kit', label: 'Esenciales' }, ...tabs.slice(1)];
   return `<nav class="tabs" role="tablist">${tabs.map((t, i) => `<button role="tab" data-tab="${t.id}" data-label="${esc(t.label)}" class="${i ? '' : 'on'}"><span class="tn">${i + 1}</span>${t.label}</button>${i < tabs.length - 1 ? '<span class="tarr" aria-hidden="true">›</span>' : ''}`).join('')}</nav>`;
 }
 function bindTabs(root) {
+  const kitMod = root.id.replace('sec-', '');
+  if ($('.tabs [data-tab="kit"]', root) && !$('.pane[data-pane="kit"]', root)) {
+    const first = $('.pane[data-pane]', root);
+    first.insertAdjacentHTML('afterend', `<div class="pane" data-pane="kit" hidden>${essentialsHTML(kitMod)}</div>`);
+    setTimeout(() => essRefresh($('.pane[data-pane="kit"] .ess', root)), 0);
+  }
   const btns = $$('.tabs [data-tab]', root);
   const show = id => {
     btns.forEach(b => b.classList.toggle('on', b.dataset.tab === id));
