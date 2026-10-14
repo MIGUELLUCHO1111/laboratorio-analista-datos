@@ -21,10 +21,14 @@ App.register({
     ];
     sec.innerHTML = `
     <div class="hero">
-      <div class="eyebrow" style="--m:var(--c-fund)">Ruta práctica · 7 áreas · Tutor IA integrado</div>
+      <div class="hero-txt">
+      <div class="eyebrow">Ruta práctica · 7 áreas · Tutor IA integrado</div>
       <h1>Aprende análisis de datos <em>haciendo</em>, no solo leyendo.</h1>
-      <p class="lead" style="font-size:18px;color:var(--muted);max-width:66ch">Cada sección tiene lecciones cortas, un laboratorio donde escribes código real (Python y SQL se ejecutan aquí mismo), retos que se corrigen solos y un quiz para comprobar que entendiste la lógica. Si te atascas, abre el <b>Tutor IA</b> (botón abajo a la derecha): ve lo que estás escribiendo y te guía.</p>
-      <div class="row"><button class="btn" data-goto="fundamentos" style="--m:var(--c-fund)">Empezar por la lógica del analista →</button><button class="btn ghost" data-goto="herramientas">Qué debo instalar</button></div>
+      <p class="lead" style="font-size:18px;max-width:60ch">Cada sección tiene lecciones cortas, un laboratorio donde escribes código real (Python y SQL se ejecutan aquí mismo), retos que se corrigen solos y un quiz para comprobar que entendiste la lógica. Si te atascas, abre el <b>Tutor IA</b> (botón abajo a la derecha): ve lo que estás escribiendo y te guía.</p>
+      <div class="row"><button class="btn" data-goto="fundamentos" style="--m:var(--yel);--on-m:#1A1600">Empezar por la lógica del analista →</button><button class="btn ghost" data-goto="herramientas">Qué debo instalar</button></div>
+      <div class="kpis"><div><b id="kLab">7</b><span>áreas</span></div><div><b id="kLes">0</b><span>lecciones</span></div><div><b id="kCh">0</b><span>retos y quizzes</span></div><div><b id="kDone">0</b><span>completados por ti</span></div></div>
+      </div>
+      <canvas id="heroFx" aria-hidden="true"></canvas>
     </div>
 
     <div class="card" style="gap:14px">
@@ -68,14 +72,53 @@ App.register({
       </tbody></table></div>
     </div>`;
   },
-  onShow() { renderHomeCards(); }
+  onShow() { renderHomeCards(); heroFlow(); },
 });
+
+/* Animación del hero: datos que fluyen por las 5 etapas, con los colores favoritos */
+function heroFlow() {
+  const all = Object.values(App.tasks).flatMap(t => [...t]);
+  countUp($('#kLes'), all.filter(x => x.includes(':l:')).length);
+  countUp($('#kCh'), all.filter(x => /:(c|q):/.test(x)).length);
+  countUp($('#kDone'), Object.keys(App.state.done).length);
+  const c = $('#heroFx'); if (!c || c._on) return; c._on = true;
+  const g = c.getContext('2d'), cols = ['#11A64B', '#E3122F', '#1E5BFF', '#FFD21F', '#3FCB72'];
+  const labels = ['Obtener', 'Procesar', 'Consultar', 'Analizar', 'Comunicar'];
+  let W, H, dots = [];
+  const size = () => { const r = c.getBoundingClientRect(); W = c.width = r.width * devicePixelRatio; H = c.height = r.height * devicePixelRatio; };
+  size(); addEventListener('resize', size);
+  const nodeX = i => W * (0.1 + i * 0.2), nodeY = i => H * (0.45 + Math.sin(i * 1.3) * 0.22);
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const frame = () => {
+    if (!$('#sec-inicio').hidden) {
+      g.clearRect(0, 0, W, H);
+      const d = devicePixelRatio;
+      g.lineWidth = 2 * d; g.strokeStyle = 'rgba(242,247,243,.14)';
+      g.beginPath(); for (let i = 0; i < 5; i++) { i ? g.lineTo(nodeX(i), nodeY(i)) : g.moveTo(nodeX(i), nodeY(i)); } g.stroke();
+      if (dots.length < 46 && Math.random() < .35) dots.push({ t: 0, s: .0025 + Math.random() * .004, c: cols[Math.floor(Math.random() * 4)], o: (Math.random() - .5) * 26 });
+      dots = dots.filter(p => p.t < 4);
+      for (const p of dots) {
+        p.t += p.s * 2.2; const i = Math.floor(p.t), f = p.t - i;
+        const x = nodeX(i) + (nodeX(i + 1) - nodeX(i)) * f, y = nodeY(i) + (nodeY(i + 1) - nodeY(i)) * f + p.o * d * Math.sin(f * Math.PI);
+        g.fillStyle = p.c; g.globalAlpha = .9; g.beginPath(); g.arc(x, y, 3.2 * d, 0, 7); g.fill(); g.globalAlpha = 1;
+      }
+      for (let i = 0; i < 5; i++) {
+        g.fillStyle = '#0A1A12'; g.strokeStyle = cols[i]; g.lineWidth = 3 * d;
+        g.beginPath(); g.arc(nodeX(i), nodeY(i), 15 * d, 0, 7); g.fill(); g.stroke();
+        g.fillStyle = 'rgba(242,247,243,.8)'; g.font = `${12 * d}px Archivo, sans-serif`; g.textAlign = 'center';
+        g.fillText(labels[i], nodeX(i), nodeY(i) + 34 * d);
+      }
+    }
+    if (!reduce) requestAnimationFrame(frame);
+  };
+  frame();
+}
 
 function renderHomeCards() {
   const box = $('#homeCards'); if (!box) return;
   box.innerHTML = App.modules.filter(m => m.id !== 'inicio' && m.desc).map(m => {
     const p = App.progress(m.id);
-    return `<button class="modcard" data-goto="${m.id}" style="--m:var(${m.color})">
+    return `<button class="modcard" data-goto="${m.id}" style="--m:var(${m.color});--p:${p.pct / 100}">
       <div class="top"><span class="glyph">${m.glyph}</span><h3>${esc(m.title)}</h3></div>
       <p>${esc(m.desc)}</p>
       <div class="bar" data-prog="${m.id}"><i style="width:${p.pct}%"></i></div>

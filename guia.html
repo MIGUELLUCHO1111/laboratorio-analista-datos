@@ -2,7 +2,7 @@
 <meta name="description" content="Plataforma interactiva para aprender Web Scraping, APIs, Python, SQL, Excel y Power BI practicando.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=JetBrains+Mono:wght@400;600&family=Source+Sans+3:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=JetBrains+Mono:wght@400;600&family=Source+Sans+3:wght@400;600;700&display=swap">
 <style>
 /* Layout: cuaderno de laboratorio — barra lateral fija con la ruta de estudio; área de trabajo amplia con lecciones, laboratorio y retos por módulo */
 :root{
@@ -15,7 +15,8 @@
   --on-m:#FFFFFF;
   --code-bg:#13201C; --code-ink:#DCE8E3; --code-muted:#7E948C; --code-key:#7FD4B8; --code-str:#F0C674;
   --hl:#FFE36B;
-  --f-display:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;
+  --hero-bg:#0A1A12; --hero-ink:#F2F7F3; --hero-green:#3FCB72; --yel:#FFD21F; --red:#E3122F; --blue:#1E5BFF; --green:#11A64B;
+  --f-display:'Archivo','Segoe UI',system-ui,sans-serif;
   --f-body:'Source Sans 3','Segoe UI',system-ui,sans-serif;
   --f-mono:'JetBrains Mono',Consolas,'Courier New',monospace;
   --r:10px;
@@ -29,7 +30,7 @@
     --c-fund:#3FCB72; --c-scr:#FF4D5E; --c-api:#5B8CFF; --c-py:#FFD21F; --c-sql:#3FA2FF; --c-xl:#46C978; --c-bi:#FFD21F; --c-proj:#FF4D5E; --c-git:#FF6B7A; --c-tool:#3FCB72;
     --c-yel-t:#FFD21F;
     --on-m:#06100D;
-    --code-bg:#09100E; --hl:#6B5A12;
+    --code-bg:#09100E; --hl:#6B5A12; --hero-bg:#06100B;
     color-scheme:dark;
   }
 }
@@ -41,7 +42,7 @@
   --c-fund:#3FCB72; --c-scr:#FF4D5E; --c-api:#5B8CFF; --c-py:#FFD21F; --c-sql:#3FA2FF; --c-xl:#46C978; --c-bi:#FFD21F; --c-proj:#FF4D5E; --c-git:#FF6B7A; --c-tool:#3FCB72;
     --c-yel-t:#FFD21F;
   --on-m:#06100D;
-  --code-bg:#09100E; --hl:#6B5A12;
+  --code-bg:#09100E; --hl:#6B5A12; --hero-bg:#06100B;
   color-scheme:dark;
 }
 *{box-sizing:border-box}
@@ -97,9 +98,22 @@ main{padding-inline:clamp(16px,4vw,48px);padding-block:28px 80px;min-width:0}
 }
 
 /* ---------- cabecera de módulo ---------- */
-.mhead{display:grid;gap:12px;padding-block:6px 4px;border-bottom:1px solid var(--line);padding-bottom:22px}
+.mhead{display:grid;gap:12px;background:var(--m);color:var(--on-m);border-radius:18px;padding:clamp(20px,4vw,34px);position:relative;overflow:hidden;isolation:isolate}
+.mhead::after{content:attr(data-glyph);position:absolute;right:-10px;bottom:-34px;font-family:var(--f-mono);font-weight:600;font-size:clamp(120px,20vw,210px);line-height:1;opacity:.13;z-index:-1;letter-spacing:-.06em;pointer-events:none}
+.mhead .eyebrow{color:var(--on-m)!important;opacity:.9}
+.mhead .eyebrow .glyph{background:var(--on-m);color:var(--m)}
+.mhead .lead{color:var(--on-m)!important;opacity:.9}
+.mhead .lead code{background:color-mix(in srgb,var(--on-m) 16%,transparent);border-color:transparent;color:inherit}
+.mhead .chip{background:color-mix(in srgb,var(--on-m) 14%,transparent);border-color:transparent;color:var(--on-m)}
+.mhead .chip b{color:var(--on-m)}
+.mhead .mring{position:absolute;right:clamp(16px,3vw,30px);top:clamp(16px,3vw,28px);width:64px;height:64px}
+.mhead .mring circle{fill:none;stroke-width:6}
+.mhead .mring .bg{stroke:color-mix(in srgb,var(--on-m) 22%,transparent)}
+.mhead .mring .fg{stroke:var(--on-m);stroke-linecap:round;transition:stroke-dasharray .8s cubic-bezier(.2,.8,.2,1)}
+.mhead .mring text{fill:var(--on-m);font-family:var(--f-display);font-weight:700;font-size:15px}
+.mhead h1{padding-right:76px}
 .eyebrow{display:flex;gap:10px;align-items:center;font-size:12.5px;letter-spacing:.09em;text-transform:uppercase;font-weight:700;color:var(--m-t,var(--m))}
-.mhead h1{font-size:clamp(30px,4.6vw,48px);font-weight:800;letter-spacing:-.02em}
+.mhead h1{font-size:clamp(32px,5vw,52px);font-weight:800;letter-spacing:-.025em}
 .mhead .lead{font-size:18px;color:var(--muted);max-width:68ch}
 .mstats{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
 .chip{display:inline-flex;align-items:center;gap:6px;font-size:13px;border:1px solid var(--line);border-radius:99px;padding:3px 11px;background:var(--panel);color:var(--muted)}
@@ -201,9 +215,20 @@ table.t tr:last-child td{border-bottom:0}
 #toast.show{transform:translateX(-50%) translateY(0);visibility:visible}
 
 /* ---------- inicio ---------- */
-.hero{display:grid;gap:16px;padding-block:8px 6px}
-.hero h1{font-size:clamp(34px,5.8vw,62px);font-weight:800;letter-spacing:-.03em;max-width:17ch}
-.hero h1 em{font-style:normal;color:var(--accent)}
+.hero{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:16px;background:var(--hero-bg);color:var(--hero-ink);border-radius:20px;padding:clamp(22px,4.5vw,44px);position:relative;overflow:hidden;isolation:isolate}
+.hero-txt{display:grid;gap:16px;align-content:start;min-width:0}
+.hero canvas{width:100%;height:100%;min-height:260px;display:block}
+@media (max-width:1100px){.hero{grid-template-columns:minmax(0,1fr)}.hero canvas{min-height:150px;height:150px}}
+.hero h1{font-size:clamp(34px,6vw,64px);font-weight:800;letter-spacing:-.03em;max-width:15ch;line-height:1.05}
+.hero h1 em{font-style:normal;color:var(--yel)}
+.hero .lead{color:color-mix(in srgb,var(--hero-ink) 82%,transparent)!important}
+.hero .eyebrow{color:var(--hero-green)!important}
+.hero .btn.ghost{color:var(--hero-ink);border-color:color-mix(in srgb,var(--hero-ink) 35%,transparent)}
+.hero .btn.ghost:hover{background:color-mix(in srgb,var(--hero-ink) 12%,transparent)}
+.hero .kpis{display:flex;flex-wrap:wrap;gap:22px;margin-top:6px}
+.hero .kpis div{display:grid}
+.hero .kpis b{font-family:var(--f-display);font-size:30px;font-weight:800;font-variant-numeric:tabular-nums}
+.hero .kpis span{font-size:13px;opacity:.75;text-transform:uppercase;letter-spacing:.08em}
 .pipeline{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--panel)}
 @media (max-width:760px){.pipeline{grid-template-columns:minmax(0,1fr)}}
 .pstage{padding:16px;border-right:1px solid var(--line);display:grid;gap:8px;align-content:start;position:relative}
@@ -235,6 +260,41 @@ table.t tr:last-child td{border-bottom:0}
 .big{font-family:var(--f-display);font-size:34px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1}
 mark{background:var(--hl);color:inherit;border-radius:3px;padding:0 2px}
 svg text{font-family:var(--f-body)}
+
+/* ---------- dinámica e interacción ---------- */
+@keyframes rise{from{opacity:.35;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes pop{0%{transform:scale(.92)}60%{transform:scale(1.04)}100%{transform:scale(1)}}
+.pane:not([hidden]){animation:rise .35s cubic-bezier(.2,.8,.2,1)}
+.section:not([hidden])>.mhead{animation:rise .45s cubic-bezier(.2,.8,.2,1)}
+.btn{transition:transform .12s,filter .15s,background .15s}
+.btn:active{transform:scale(.96)}
+.modcard,.chal,.q,details.lesson,.vis,.gz{transition:transform .18s,box-shadow .18s,border-color .18s}
+.modcard:hover,.chal:hover,.vis:hover{transform:translateY(-3px);box-shadow:0 10px 26px color-mix(in srgb,var(--m,var(--accent)) 22%,transparent)}
+details.lesson:hover{border-color:var(--m)}
+details.lesson[open]{border-color:var(--m);box-shadow:inset 4px 0 0 var(--m)}
+.modcard{position:relative;overflow:hidden}
+.modcard::before{content:"";position:absolute;inset:0 0 auto 0;height:4px;background:var(--m);transform:scaleX(var(--p,0));transform-origin:left;transition:transform .6s}
+.chal.is-done{animation:pop .45s}
+.chal.is-done .chal-st{animation:pop .45s}
+.nav button{transition:background .15s,transform .15s}
+.nav button:hover{transform:translateX(3px)}
+.nav button.active{background:color-mix(in srgb,var(--m) 16%,transparent);font-weight:700}
+.tabs button{transition:background .15s,color .15s,transform .12s}
+.tabs button:hover:not(.on){border-color:var(--m);transform:translateY(-1px)}
+.opt{transition:border-color .15s,background .15s,transform .12s}
+.opt:hover:not(:disabled){transform:translateX(4px)}
+.opt.bad{animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+#fx{position:fixed;inset:0;pointer-events:none;z-index:70}
+.lvlup{position:fixed;left:50%;top:22%;transform:translate(-50%,-20px);opacity:0;z-index:75;background:var(--hero-bg);color:var(--hero-ink);border-radius:18px;padding:22px 30px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.35);transition:opacity .35s,transform .35s;pointer-events:none;max-width:calc(100vw - 32px);border:2px solid var(--yel)}
+.lvlup.show{opacity:1;transform:translate(-50%,0)}
+.lvlup small{display:block;text-transform:uppercase;letter-spacing:.12em;font-size:12px;color:var(--yel);font-weight:700}
+.lvlup b{font-family:var(--f-display);font-size:28px;font-weight:800}
+.daybox{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;align-items:center;font-size:13px;color:var(--muted)}
+.daybox .fire{font-family:var(--f-display);font-weight:800;font-size:22px;color:var(--red);line-height:1}
+.daybox .bar i{background:var(--yel)}
+@media (prefers-reduced-motion: reduce){.hero canvas{display:none}}
+
 
 /* ---------- Tutor IA ---------- */
 .tutor-fab{position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:50;border:0;border-radius:99px;background:var(--ink);color:var(--bg);padding:11px 18px;font-weight:700;font-size:15px;display:flex;gap:8px;align-items:center;box-shadow:0 6px 20px rgba(0,0,0,.18)}
@@ -271,6 +331,7 @@ svg text{font-family:var(--f-body)}
       <div class="lvl"><span>Nivel</span><b id="lvlName">Aprendiz</b></div>
       <div class="bar"><i id="lvlBar" style="width:0%"></i></div>
       <div class="lvl"><span id="xpTxt">0 XP</span><span id="lvlNext">próximo: 100</span></div>
+      <div class="daybox"><span class="fire" id="streak">0</span><span>días de racha</span><span></span><span><span id="todayTxt">Meta de hoy: 0 / 50 XP</span><span class="bar" style="display:block;margin-top:4px"><i id="todayBar" style="width:0%"></i></span></span></div>
     </div>
     <nav class="nav" id="nav"></nav>
     <div class="side-foot">
@@ -282,6 +343,8 @@ svg text{font-family:var(--f-body)}
   <main id="main"></main>
 </div>
 <div id="toast" role="status" aria-live="polite"></div>
+<canvas id="fx" aria-hidden="true"></canvas>
+<div class="lvlup" id="lvlup" role="status" aria-live="polite"><small>¡Subiste de nivel!</small><b id="lvlupName"></b></div>
 
 <script src="js/core.js"></script>
 <script src="js/data.js"></script>

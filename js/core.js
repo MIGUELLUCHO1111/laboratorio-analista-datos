@@ -24,11 +24,16 @@ const App = {
   isDone(id) { return !!this.state.done[id]; },
   done(id, xp = 10, msg) {
     if (this.state.done[id]) return false;
+    const before = this.level().name;
     this.state.done[id] = Date.now();
     this.state.xp += xp;
+    (this.state.log ||= []).push([Date.now(), xp]);
     store.set('dl_state', this.state);
     toast(`+${xp} XP · ${msg || '¡Bien hecho!'}`);
     this.refresh();
+    if (xp >= 15) FX.confetti(xp >= 25 ? 140 : 80);
+    const after = this.level().name;
+    if (after !== before) { $('#lvlupName').textContent = after; $('#lvlup').classList.add('show'); FX.confetti(220); setTimeout(() => $('#lvlup').classList.remove('show'), 2800); }
     return true;
   },
   progress(mod) {
@@ -47,9 +52,17 @@ const App = {
     const L = this.level();
     $('#lvlName').textContent = L.name;
     $('#lvlBar').style.width = L.pct + '%';
-    $('#xpTxt').textContent = L.xp + ' XP';
     $('#lvlNext').textContent = L.next ? 'próximo nivel: ' + L.next : 'nivel máximo';
     $('#xpMini').textContent = L.xp + ' XP · ' + L.name;
+    const log = this.state.log || [], day = t => new Date(t).toDateString();
+    const today = log.filter(([t]) => day(t) === day(Date.now())).reduce((a, [, x]) => a + x, 0);
+    $('#todayTxt').textContent = `Meta de hoy: ${Math.min(today, 50)} / 50 XP`;
+    $('#todayBar').style.width = Math.min(100, today * 2) + '%';
+    const days = new Set(log.map(([t]) => day(t))); let st = 0; const d = new Date();
+    if (!days.has(d.toDateString())) d.setDate(d.getDate() - 1);
+    while (days.has(d.toDateString())) { st++; d.setDate(d.getDate() - 1); }
+    $('#streak').textContent = st;
+    countUp($('#xpTxt'), L.xp, ' XP');
     for (const m of this.modules) {
       const p = this.progress(m.id);
       const fg = $(`#nav [data-go="${m.id}"] .fg`);
@@ -59,6 +72,8 @@ const App = {
         const tx = el.parentElement.querySelector('.pc'); if (tx) tx.textContent = `${p.d} de ${p.t} actividades · ${p.pct}%`;
       });
       $$(`[data-mstat="${m.id}"]`).forEach(el => el.innerHTML = `<b>${p.d}/${p.t}</b> actividades completadas`);
+      $$(`[data-mring="${m.id}"]`).forEach(el => { el.querySelector('.fg').setAttribute('stroke-dasharray', `${p.pct / 100 * 163.4} 163.4`); el.querySelector('text').textContent = p.pct + '%'; });
+      $$(`.modcard[data-goto="${m.id}"]`).forEach(el => el.style.setProperty('--p', p.pct / 100));
     }
     $$('details.lesson[data-task]').forEach(d => d.classList.toggle('done', this.isDone(d.dataset.task)));
   },
@@ -70,7 +85,7 @@ const App = {
     $('#side').classList.remove('open');
     if (push) { try { history.replaceState(null, '', '#' + m.id); } catch (e) { } }
     window.scrollTo({ top: 0 });
-    if (m.onShow && !m._shown) { m._shown = true; m.onShow(); }
+    if (m.onShow) m.onShow();
     Tutor.setContext(m);
   },
   start() {
@@ -124,7 +139,8 @@ function loadScript(src) {
 
 /* ---------- Componentes ---------- */
 function moduleHead(m, lead, extra = '') {
-  return `<header class="mhead">
+  return `<header class="mhead" data-glyph="${m.glyph.replace(/&lt;/g, '<').replace(/&gt;/g, '>')}">
+    <svg class="mring" viewBox="0 0 64 64" data-mring="${m.id}" aria-label="Progreso de la sección"><circle class="bg" cx="32" cy="32" r="26"/><circle class="fg" cx="32" cy="32" r="26" stroke-dasharray="0 163.4" transform="rotate(-90 32 32)"/><text x="32" y="37" text-anchor="middle">0%</text></svg>
     <div class="eyebrow"><span class="glyph">${m.glyph}</span>${esc(m.group)}</div>
     <h1>${m.heading || esc(m.title)}</h1>
     <p class="lead">${lead}</p>
@@ -429,3 +445,33 @@ document.addEventListener('click', async e => {
     out.innerHTML = `<p class="note warn">${esc(err.message || 'No se pudo generar el ejercicio. Intenta de nuevo.')}</p>`;
   } finally { b.disabled = false; }
 });
+
+/* ---------- efectos: contador animado y confeti ---------- */
+function countUp(el, to, suffix = '') {
+  const from = +(el.dataset.v || 0); el.dataset.v = to;
+  if (from === to || matchMedia('(prefers-reduced-motion: reduce)').matches) { el.textContent = to + suffix; return; }
+  const t0 = performance.now(), dur = 700;
+  const step = t => { const k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3); el.textContent = Math.round(from + (to - from) * e) + suffix; if (k < 1) requestAnimationFrame(step); };
+  requestAnimationFrame(step);
+}
+const FX = {
+  parts: [], running: false,
+  confetti(n = 100) {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const c = $('#fx'); if (!c) return;
+    c.width = innerWidth; c.height = innerHeight;
+    const cols = ['#11A64B', '#E3122F', '#1E5BFF', '#FFD21F'];
+    for (let i = 0; i < n; i++) this.parts.push({ x: innerWidth / 2 + (Math.random() - .5) * 200, y: innerHeight * .35, vx: (Math.random() - .5) * 14, vy: -Math.random() * 13 - 4, r: Math.random() * 6 + 4, c: cols[i % 4], a: Math.random() * 6, va: (Math.random() - .5) * .3, life: 1 });
+    if (!this.running) { this.running = true; requestAnimationFrame(() => this.tick()); }
+  },
+  tick() {
+    const c = $('#fx'), g = c.getContext('2d');
+    g.clearRect(0, 0, c.width, c.height);
+    this.parts = this.parts.filter(p => p.life > 0 && p.y < c.height + 20);
+    for (const p of this.parts) {
+      p.vy += .32; p.vx *= .99; p.x += p.vx; p.y += p.vy; p.a += p.va; p.life -= .007;
+      g.save(); g.globalAlpha = Math.max(0, p.life); g.translate(p.x, p.y); g.rotate(p.a); g.fillStyle = p.c; g.fillRect(-p.r / 2, -p.r / 4, p.r, p.r / 2); g.restore();
+    }
+    if (this.parts.length) requestAnimationFrame(() => this.tick()); else { this.running = false; g.clearRect(0, 0, c.width, c.height); }
+  }
+};
