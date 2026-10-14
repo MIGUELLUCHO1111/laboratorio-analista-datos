@@ -403,7 +403,8 @@ const Tutor = {
         <label class="ch-auto"><input type="checkbox" data-autoai> Analizar mis errores automáticamente con IA</label>
         <div class="row"><button class="btn sm" id="tutorSend" type="submit">Enviar</button><button class="btn ghost sm" type="button" id="tutorStop" hidden>Detener</button><button class="btn ghost sm" type="button" id="tutorClear">Nueva conversación</button></div>
       </form>
-      <p class="tutor-off" id="tutorOff" hidden>El Tutor IA funciona cuando abres esta plataforma dentro de Claude (versión Artifact). En esta copia puedes seguir usando lecciones, laboratorios, pistas y soluciones.</p>
+      <div class="tutor-code" id="tutorCode" hidden><label for="tutorCodeIn" class="tcap">Código de acceso al tutor (te lo da quien administra la página)</label><div class="row"><input id="tutorCodeIn" class="inp" type="password" autocomplete="off"><button class="btn sm" type="button" id="tutorCodeOk">Guardar</button></div></div>
+      <p class="tutor-off" id="tutorOff" hidden></p>
     </aside>`);
     $('#tutorFab').onclick = () => this.open();
     $('#tutorClose').onclick = () => { $('#tutor').hidden = true; };
@@ -423,11 +424,24 @@ const Tutor = {
       };
       this.ask(map[b.dataset.tq]);
     };
-    try {
-      if (window.claude && typeof window.claude.use === 'function') this.sample = await window.claude.use('sample');
-    } catch (e) { this.sample = null; }
+    $('#tutorCodeOk').onclick = () => { store.set('dl_tcode', $('#tutorCodeIn').value.trim()); $('#tutorCode').hidden = true; toast('Código guardado'); };
     $$('[data-autoai]').forEach(x => x.checked = store.get('dl_autoai', true));
-    if (!this.sample) { $('#tutorOff').hidden = false; $('#tutorQuick').hidden = true; $('#tutorForm').hidden = true; $('#tutorFab').classList.add('off'); }
+    this.mode = 'none';
+    try {
+      if (window.claude && typeof window.claude.use === 'function') { this.sample = await window.claude.use('sample'); if (this.sample) this.mode = 'claude'; }
+    } catch (e) { this.sample = null; }
+    /* Fuera de Claude: usa la función del servidor (Vercel) si está configurada */
+    if (!this.sample && /^https?:$/.test(location.protocol)) {
+      try {
+        const r = await fetch('/api/tutor', { method: 'GET' });
+        if (r.ok) { const info = await r.json(); if (info.configured) { this.sample = remoteSample(); this.mode = 'server'; if (info.needsCode && !store.get('dl_tcode', '')) $('#tutorCode').hidden = false; } else this.mode = 'unconfigured'; }
+      } catch (e) { }
+    }
+    if (!this.sample) {
+      $('#tutorFab').classList.add('off');
+      const off = $('#tutorOff'); off.hidden = false;
+      off.textContent = this.mode === 'unconfigured' ? 'Puedes escribir aquí, pero la IA aún no está conectada en este sitio: falta configurar la clave del servidor. Mientras tanto usa el diagnóstico automático, las pistas y soluciones.' : 'Puedes escribir aquí. Para que la IA responda, abre la plataforma dentro de Claude (versión Artifact) o en el sitio web con el tutor configurado.';
+    }
   },
   /* El tutor registra cada ejecución en su panel: va a la par contigo */
   logEvent(state, kind, text, loc) {
@@ -456,7 +470,7 @@ const Tutor = {
     const log = $('#tutorLog');
     log.insertAdjacentHTML('beforeend', `<div class="msg me">${esc(text)}</div>`);
     if (!this.sample) {
-      log.insertAdjacentHTML('beforeend', `<div class="msg ai">El Tutor IA solo responde cuando abres la plataforma dentro de Claude. Mientras tanto, usa las pistas y soluciones de cada reto.</div>`);
+      log.insertAdjacentHTML('beforeend', `<div class="msg ai">Todavía no puedo responder en esta versión: la IA no está conectada aquí. ${this.mode === 'unconfigured' ? 'Quien administra el sitio debe agregar la clave ANTHROPIC_API_KEY en Vercel.' : 'Ábreme dentro de Claude (versión Artifact) para conversar.'} Mientras tanto, el tutor en vivo sigue revisando todo lo que ejecutas.</div>`);
       log.scrollTop = log.scrollHeight; return;
     }
     const bubble = document.createElement('div'); bubble.className = 'msg ai'; bubble.textContent = 'Pensando…';
@@ -478,7 +492,10 @@ const Tutor = {
         sampling_disabled: 'Claude no está disponible para esta cuenta.',
         rate_limited: 'Demasiadas preguntas seguidas. Espera un momento y vuelve a intentarlo.',
         cancelled: 'Respuesta detenida.',
-        session_expired: 'Tu sesión expiró. Vuelve a iniciar sesión en Claude.'
+        session_expired: 'Tu sesión expiró. Vuelve a iniciar sesión en Claude.',
+        bad_code: 'El código de acceso no es correcto. Escríbelo de nuevo arriba.',
+        not_configured: 'La IA no está configurada en este sitio.',
+        refused: 'No puedo responder esa pregunta. Intenta reformularla sobre el tema de estudio.'
       }[e && e.code] || 'No pude responder ahora. Intenta de nuevo en unos segundos.';
       bubble.innerHTML = (e && e.text ? md(e.text) + '<hr>' : '') + `<i>${esc(copy)}</i>`;
     } finally {
@@ -487,10 +504,35 @@ const Tutor = {
   },
   /* Ejercicio generado por IA en formato JSON */
   async exercise(topic, level) {
-    if (!this.sample) throw new Error('El generador de ejercicios con IA funciona dentro de Claude.');
+    if (!this.sample) throw new Error('El generador de ejercicios con IA necesita la IA conectada (versión Artifact o sitio con el tutor configurado).');
     return this.sample.json(`${this.rules}\n\nCrea UN ejercicio práctico nuevo y original sobre: ${topic}. Dificultad: ${level}. Responde SOLO con JSON con esta forma: {"titulo": string, "enunciado": string, "datos": string, "pista": string, "solucion": string, "explicacion": string}. "datos" contiene datos de ejemplo o código inicial (puede ser cadena vacía). "solucion" es el código o la respuesta. Variedad: no repitas ejercicios típicos de la plataforma.`, { cache: false });
   }
 };
+
+/* Cliente del tutor en el servidor (Vercel): misma forma que la función sample de Claude */
+function remoteSample() {
+  const call = async (input, opts = {}) => {
+    const messages = typeof input === 'string' ? [{ role: 'user', content: input }] : input;
+    let r;
+    try {
+      r = await fetch('/api/tutor', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Tutor-Code': store.get('dl_tcode', '') }, body: JSON.stringify({ messages }), signal: opts.signal });
+    } catch (e) { throw { code: e && e.name === 'AbortError' ? 'cancelled' : 'upstream_error', message: String(e) }; }
+    const data = await r.json().catch(() => ({}));
+    if (!r.ok || data.code) {
+      if (data.code === 'bad_code') $('#tutorCode').hidden = false;
+      throw { code: data.code || 'upstream_error', message: data.error || 'Error del servidor' };
+    }
+    if (opts.onText) opts.onText({ text: data.text, delta: data.text });
+    return { text: data.text, truncated: !!data.truncated };
+  };
+  call.json = async (input, opts = {}) => {
+    const { text } = await call(input + '\n\nResponde únicamente con el JSON, sin texto adicional.', opts);
+    const fence = /```(?:json)?\s*([\s\S]*?)```/.exec(text);
+    const raw = fence ? fence[1] : text.slice(Math.min(...['{', '['].map(c => text.indexOf(c)).filter(i => i >= 0)), Math.max(text.lastIndexOf('}'), text.lastIndexOf(']')) + 1);
+    try { return JSON.parse(raw); } catch (e) { throw { code: 'invalid_json', message: 'Respuesta no válida', text }; }
+  };
+  return call;
+}
 
 /* Markdown mínimo para respuestas de la IA */
 function md(t) {
