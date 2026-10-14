@@ -318,6 +318,186 @@ details.lesson[open]{border-color:var(--m);box-shadow:inset 4px 0 0 var(--m)}
 .tutor-in{display:grid;gap:8px;padding:10px 12px;border-top:1px solid var(--line)}
 .tutor-in textarea{resize:none;width:100%}
 .tutor-off{padding:12px 14px;font-size:14px;color:var(--muted);border-top:1px solid var(--line)}
+
+/* ================= REDISEÑO v3: ruta visual, fondos, botones y títulos ================= */
+:root{--side-bg:#07150E;--side-2:#0D2219;--side-ink:#EAF3ED;--side-muted:#8FA89A;--side-line:rgba(234,243,237,.12)}
+h1,h2,h3,h4{text-transform:uppercase;letter-spacing:.01em}
+h3 small,h4 small{text-transform:none;letter-spacing:0}
+.msg h1,.msg h2,.msg h3{text-transform:none}
+
+/* fondo de la página: manchas de color suaves + retícula de puntos */
+body{background:
+  radial-gradient(900px 520px at 105% -8%, color-mix(in srgb,var(--blue) 11%,transparent), transparent 62%),
+  radial-gradient(800px 520px at -8% 108%, color-mix(in srgb,var(--green) 12%,transparent), transparent 60%),
+  radial-gradient(600px 400px at 60% 50%, color-mix(in srgb,var(--yel) 5%,transparent), transparent 70%),
+  var(--bg);background-attachment:fixed}
+main{background-image:radial-gradient(color-mix(in srgb,var(--ink) 9%,transparent) 1px,transparent 1.3px);background-size:24px 24px}
+
+/* botones con relieve: se "hunden" al presionar */
+.btn{border-radius:11px;font-weight:700;box-shadow:0 3px 0 color-mix(in srgb,var(--m,var(--accent)) 55%,#000);transform:translateY(0);transition:transform .12s,box-shadow .12s,filter .15s,background .15s}
+.btn:hover{transform:translateY(-1px);box-shadow:0 4px 0 color-mix(in srgb,var(--m,var(--accent)) 55%,#000);filter:brightness(1.06)}
+.btn:active{transform:translateY(2px);box-shadow:0 1px 0 color-mix(in srgb,var(--m,var(--accent)) 55%,#000)}
+.btn.ghost{box-shadow:0 3px 0 var(--line);background:var(--panel)}
+.btn.ghost:hover{box-shadow:0 4px 0 var(--line)}
+.btn.ghost:active{box-shadow:0 1px 0 var(--line)}
+.btn.big{font-size:16px;padding:11px 20px;border-radius:13px}
+.btn.yel{--m:var(--yel);--on-m:#1A1600;background:var(--yel);border-color:var(--yel);color:#1A1600}
+.btn.ghost.light{background:transparent;color:var(--hero-ink);border-color:rgba(242,247,243,.35);box-shadow:0 3px 0 rgba(242,247,243,.18)}
+.card,.chal,.q,details.lesson{border-radius:16px}
+
+/* ---------- barra lateral oscura con la ruta como línea de metro ---------- */
+.side{background:linear-gradient(180deg,var(--side-bg),var(--side-2));color:var(--side-ink);border-right:0;gap:14px}
+.side .brand small{color:var(--side-muted)}
+.brand-mark{background:linear-gradient(135deg,var(--green),var(--blue));color:#fff;border-radius:12px}
+.xpbox{background:rgba(234,243,237,.06);border:1px solid var(--side-line);border-radius:16px}
+.xpbox .lvl{color:var(--side-muted)} .xpbox .lvl b{color:var(--side-ink)}
+.side .bar{background:rgba(234,243,237,.12)}
+.side #lvlBar{background:linear-gradient(90deg,var(--green),var(--yel))}
+.prof{display:flex;gap:12px;align-items:center}
+.prof small{display:block;color:var(--side-muted);font-size:11.5px;text-transform:uppercase;letter-spacing:.1em}
+.prof b{font-family:var(--f-display);font-size:16px;text-transform:uppercase}
+.avatar{width:46px;height:46px;border-radius:50%;padding:3px;background:conic-gradient(var(--green),var(--blue),var(--red),var(--yel),var(--green));animation:spin 8s linear infinite;flex:none}
+.avatar span{width:100%;height:100%;border-radius:50%;background:var(--side-bg);display:grid;place-items:center;font-family:var(--f-display);font-weight:800;font-size:18px;animation:spin 8s linear infinite reverse}
+@keyframes spin{to{transform:rotate(360deg)}}
+.daybox{color:var(--side-muted)}
+.continue{display:grid;grid-template-columns:1fr auto;align-items:center;gap:0 10px;text-align:left;border:0;border-radius:14px;padding:11px 14px;background:var(--yel);color:#1A1600;box-shadow:0 4px 0 #9E8200;transition:transform .12s,box-shadow .12s}
+.continue span{font-size:11.5px;text-transform:uppercase;letter-spacing:.1em;font-weight:700;opacity:.8}
+.continue b{font-family:var(--f-display);text-transform:uppercase;font-size:14.5px;grid-column:1}
+.continue i{grid-row:1/3;grid-column:2;font-style:normal;width:32px;height:32px;border-radius:50%;background:#1A1600;color:var(--yel);display:grid;place-items:center;font-size:12px}
+.continue:hover{transform:translateY(-1px)} .continue:active{transform:translateY(3px);box-shadow:0 1px 0 #9E8200}
+.nav-group{color:var(--side-muted)}
+.nav .homebtn,.nav .res{display:grid;grid-template-columns:32px 1fr;gap:10px;align-items:center;width:100%;text-align:left;background:none;border:0;color:var(--side-ink);padding:7px 8px;border-radius:10px;font-size:14.5px}
+.hb-ico{width:32px;height:32px;border-radius:9px;background:rgba(234,243,237,.1);display:grid;place-items:center;font-size:17px}
+.nav .homebtn:hover,.nav .res:hover{background:rgba(234,243,237,.07);transform:translateX(3px)}
+.nav .homebtn.active,.nav .res.active{background:rgba(234,243,237,.12);box-shadow:inset 3px 0 0 var(--m)}
+.metro{list-style:none;margin:0;padding:0;position:relative;display:grid;gap:1px}
+.metro::before,.metro::after{content:"";position:absolute;left:25px;top:22px;width:3px;border-radius:3px}
+.metro::before{bottom:22px;background:var(--side-line)}
+.metro::after{height:calc((100% - 44px) * var(--fill,0));background:linear-gradient(var(--green),var(--blue),var(--red),var(--yel));transition:height .8s cubic-bezier(.2,.8,.2,1)}
+.nav .stop{display:grid;grid-template-columns:36px 1fr;gap:11px;align-items:center;width:100%;text-align:left;background:none;border:0;color:var(--side-ink);padding:6px 8px;border-radius:12px;position:relative;z-index:1}
+.nav .stop:hover{background:rgba(234,243,237,.07);transform:translateX(3px)}
+.nav .stop.active{background:rgba(234,243,237,.12);box-shadow:none}
+.nav .stop.active .lbl b{color:var(--m)}
+.node{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--m) calc(var(--p,0) * 1%),rgba(234,243,237,.16) 0);transition:transform .2s}
+.node span{width:28px;height:28px;border-radius:50%;background:var(--side-bg);display:grid;place-items:center;font-family:var(--f-display);font-weight:800;font-size:13px;color:var(--side-ink)}
+.stop.done .node span{background:var(--m);color:var(--on-m)}
+.stop.done .node span{font-size:0}.stop.done .node span::after{content:"✓";font-size:15px}
+.stop.next .node{animation:pulse 1.8s infinite}
+.stop:hover .node{transform:scale(1.12)}
+@keyframes pulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--m) 70%,transparent)}100%{box-shadow:0 0 0 13px transparent}}
+.stop .lbl{min-width:0}
+.stop .lbl b{display:block;font-size:14px;font-family:var(--f-display);text-transform:uppercase;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stop .lbl small{color:var(--side-muted);font-size:12px}
+.stop.next .lbl small{color:var(--yel);font-weight:700}
+.side .glyph{box-shadow:0 2px 0 rgba(0,0,0,.25)}
+.side-foot{color:var(--side-muted)} .linkbtn{color:var(--side-muted)}
+.side::-webkit-scrollbar{width:8px}.side::-webkit-scrollbar-thumb{background:rgba(234,243,237,.15);border-radius:8px}
+
+/* ---------- pestañas como pasos numerados ---------- */
+.tabs{gap:4px;align-items:center}
+.tabs button{display:inline-flex;align-items:center;border-radius:12px;padding:6px 14px 6px 6px;text-transform:uppercase;font-size:13px;letter-spacing:.05em;box-shadow:0 2px 0 var(--line)}
+.tabs .tn{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:8px;background:var(--panel-2);margin-right:8px;font-size:12px;font-weight:800}
+.tabs button.on{box-shadow:0 3px 0 color-mix(in srgb,var(--m) 55%,#000)}
+.tabs button.on .tn{background:var(--on-m);color:var(--m)}
+.tarr{color:var(--muted);font-size:20px;line-height:1}
+
+/* ---------- mentor ---------- */
+.mavatar{width:42px;height:42px;border-radius:13px;background:linear-gradient(135deg,var(--green),var(--blue));color:#fff;font-family:var(--f-display);font-weight:800;font-size:18px;display:grid;place-items:center;flex:none;box-shadow:0 3px 0 rgba(0,0,0,.25)}
+.mentor{display:flex;gap:14px;align-items:flex-start;background:var(--hero-bg);color:var(--hero-ink);border-radius:16px;padding:16px 18px;border-left:6px solid var(--yel);animation:rise .4s}
+.mentor b{color:var(--yel)} .mentor p{margin:4px 0 10px;opacity:.9}
+.mentor .btn.ghost{background:transparent;color:var(--hero-ink);border-color:rgba(242,247,243,.3);box-shadow:0 3px 0 rgba(242,247,243,.15)}
+.nextbar{display:flex;gap:14px;align-items:center;flex-wrap:wrap;border:2px dashed color-mix(in srgb,var(--m) 60%,transparent);border-radius:16px;padding:14px 16px;background:color-mix(in srgb,var(--m) 6%,var(--panel));margin-top:6px}
+.nextbar p{flex:1;min-width:200px}
+.nextbar.big{border-style:solid;background:color-mix(in srgb,var(--m) 13%,var(--panel))}
+.mwhy{background:color-mix(in srgb,var(--on-m) 12%,transparent);border-radius:12px;padding:10px 14px;max-width:78ch;font-size:15px;color:var(--on-m)}
+.mwhy b{color:var(--on-m)}
+.why .btn{margin-left:6px}
+
+/* ---------- inicio: hero ---------- */
+.hero2{position:relative;overflow:clip;isolation:isolate;border-radius:24px;background:var(--hero-bg);color:var(--hero-ink);padding:clamp(22px,4.5vw,46px);display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:clamp(18px,3vw,36px);align-items:center;min-height:440px}
+@media (max-width:1100px){.hero2{grid-template-columns:minmax(0,1fr)}}
+.hero2 canvas{position:absolute;inset:0;width:100%;height:100%;z-index:-1}
+.blobs{position:absolute;inset:0;z-index:-2;filter:blur(60px);opacity:.55}
+.blobs i{position:absolute;width:42%;aspect-ratio:1;border-radius:50%;animation:float 16s ease-in-out infinite alternate}
+.blobs i:nth-child(1){background:var(--green);left:-10%;top:-20%}
+.blobs i:nth-child(2){background:var(--blue);right:-12%;top:-10%;animation-delay:-4s}
+.blobs i:nth-child(3){background:var(--red);left:30%;bottom:-35%;animation-delay:-8s;width:30%}
+.blobs i:nth-child(4){background:var(--yel);right:10%;bottom:-30%;animation-delay:-12s;width:26%;opacity:.7}
+@keyframes float{0%{transform:translate(0,0) scale(1)}50%{transform:translate(8%,10%) scale(1.15)}100%{transform:translate(-6%,4%) scale(.95)}}
+.hero2 .hero-txt{display:grid;gap:16px;min-width:0}
+.hero2 .eyebrow{color:var(--hero-green)}
+.hero2 h1{font-size:clamp(36px,6.4vw,74px);font-weight:800;line-height:.98;letter-spacing:-.02em}
+.rot{display:inline-block;overflow:hidden;vertical-align:bottom}
+#rotWord{display:inline-block;color:var(--yel);transition:color .3s}
+#rotWord.out{animation:wout .26s forwards} #rotWord.in{animation:win .34s cubic-bezier(.2,.8,.2,1)}
+@keyframes wout{to{transform:translateY(-100%);opacity:0}} @keyframes win{from{transform:translateY(100%);opacity:0}to{transform:none;opacity:1}}
+.hero2 .lead{font-size:18px;max-width:52ch;color:color-mix(in srgb,var(--hero-ink) 85%,transparent)}
+.hero2 .kpis{display:flex;flex-wrap:wrap;gap:24px}
+.hero2 .kpis div{display:grid}
+.hero2 .kpis b{font-family:var(--f-display);font-size:32px;font-weight:800;font-variant-numeric:tabular-nums}
+.hero2 .kpis span{font-size:12px;opacity:.75;text-transform:uppercase;letter-spacing:.1em}
+.mission{background:rgba(242,247,243,.08);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(242,247,243,.18);border-top:5px solid var(--m);border-radius:20px;padding:22px;display:grid;gap:10px;position:relative;transition:transform .25s;box-shadow:0 20px 50px rgba(0,0,0,.35)}
+.mission:hover{transform:translateY(-4px) rotate(-.4deg)}
+.ms-tag{font-size:12px;text-transform:uppercase;letter-spacing:.12em;font-weight:700;color:var(--yel)}
+.ms-num{position:absolute;right:18px;top:8px;font-family:var(--f-display);font-weight:800;font-size:72px;line-height:1;color:var(--m);opacity:.9}
+.mission h3{font-size:26px;padding-right:90px}
+.mission p{font-size:15px;opacity:.85}
+.ms-list{list-style:none;margin:0;padding:0;display:grid;gap:6px;font-size:14.5px}
+.ms-list li{display:flex;gap:8px;align-items:center}
+.ms-list li span{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;border:2px solid rgba(242,247,243,.35);font-size:11px;flex:none}
+.ms-list li.ok span{background:var(--hero-green);border-color:var(--hero-green);color:#06100B}
+.mission .bar{background:rgba(242,247,243,.15)} .mission .bar i{background:var(--m)}
+.mission .btn{justify-self:start}
+
+/* ---------- inicio: mapa de la ruta ---------- */
+.block{display:grid;gap:16px}
+.bh{display:grid;gap:4px}
+.roadmap{position:relative;display:grid;gap:14px;padding-block:6px}
+.roadmap::before{content:"";position:absolute;left:50%;top:0;bottom:0;width:4px;margin-left:-2px;border-radius:4px;background:repeating-linear-gradient(var(--line) 0 10px,transparent 10px 18px)}
+.rm{display:grid;grid-template-columns:minmax(0,1fr) 70px minmax(0,1fr);align-items:center}
+.rm.l .rm-card{grid-column:1;grid-row:1}
+.rm.r .rm-card{grid-column:3;grid-row:1}
+.rm-node{grid-column:2;grid-row:1;justify-self:center;width:58px;height:58px;border-radius:50%;border:0;padding:4px;background:conic-gradient(var(--m) calc(var(--p) * 1%),var(--line) 0);cursor:pointer;z-index:1;transition:transform .2s}
+.rm-node span{width:100%;height:100%;border-radius:50%;background:var(--panel);display:grid;place-items:center;font-family:var(--f-display);font-weight:800;font-size:20px;color:var(--ink)}
+.rm.done .rm-node span{background:var(--m);color:var(--on-m)}
+.rm.now .rm-node{animation:pulse 1.8s infinite;transform:scale(1.1)}
+.rm-node:hover{transform:scale(1.15) rotate(-6deg)}
+.rm-card{text-align:left;font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:14px 16px;display:grid;gap:7px;cursor:pointer;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s,border-color .2s}
+.rm-card::before{content:"";position:absolute;inset:0 auto 0 0;width:5px;background:var(--m)}
+.rm-card:hover{transform:translateY(-3px);border-color:var(--m);box-shadow:0 12px 30px color-mix(in srgb,var(--m) 25%,transparent)}
+.rm.now .rm-card{border:2px solid var(--m);box-shadow:0 12px 34px color-mix(in srgb,var(--m) 28%,transparent)}
+.rm-top{display:flex;justify-content:space-between;align-items:center}
+.rm-st{background:var(--panel-2);color:var(--muted);font-family:var(--f-body);text-transform:uppercase;letter-spacing:.06em;font-size:11px}
+.rm.now .rm-st{background:var(--m);color:var(--on-m)}
+.rm.done .rm-st{background:var(--ok-bg);color:var(--ok)}
+.rm-t{font-family:var(--f-display);text-transform:uppercase;font-size:17px;letter-spacing:.01em}
+.rm-why{font-size:14px;color:var(--muted)}
+.rm-k{font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.rm-card .bar i{background:var(--m)}
+@media (max-width:760px){
+  .roadmap::before{left:29px}
+  .rm{grid-template-columns:58px minmax(0,1fr);gap:12px}
+  .rm.l .rm-card,.rm.r .rm-card{grid-column:2}
+  .rm-node{grid-column:1}
+}
+.howgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));gap:14px;counter-reset:h}
+.how{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px;display:grid;gap:8px;overflow:hidden;transition:transform .2s}
+.how:hover{transform:translateY(-4px) rotate(-.5deg)}
+.how::after{content:"";position:absolute;right:-30px;top:-30px;width:100px;height:100px;border-radius:50%;background:var(--m);opacity:.14}
+.hn{width:38px;height:38px;border-radius:12px;background:var(--m);color:var(--on-m);display:grid;place-items:center;font-family:var(--f-display);font-weight:800;font-size:18px;box-shadow:0 3px 0 color-mix(in srgb,var(--m) 55%,#000)}
+.how p{font-size:14.5px;color:var(--muted)}
+.tips li{padding-left:2px}
+@media (prefers-reduced-motion: reduce){.blobs i,.avatar,.avatar span{animation:none}}
+.hero2 h1 .hl{color:var(--yel)}
+.term{background:rgba(3,10,7,.72);border:1px solid rgba(242,247,243,.16);border-radius:14px;overflow:hidden;max-width:640px;box-shadow:0 14px 40px rgba(0,0,0,.35)}
+.term-bar{display:flex;gap:6px;align-items:center;padding:8px 12px;border-bottom:1px solid rgba(242,247,243,.1)}
+.term-bar i{width:10px;height:10px;border-radius:50%;background:#E3122F}.term-bar i:nth-child(2){background:#FFD21F}.term-bar i:nth-child(3){background:#11A64B}
+.term-lang{margin-left:auto;font-family:var(--f-mono);font-size:11px;font-weight:700;letter-spacing:.08em;padding:2px 8px;border-radius:6px;transition:background .3s}
+.term code{display:block;background:none;border:0;padding:14px 16px;color:#DCE8E3;font-size:clamp(13px,1.5vw,15px);min-height:3.2em;white-space:pre-wrap;word-break:break-word}
+.term .pr{color:var(--hero-green)}
+.cur{display:inline-block;width:9px;height:1.1em;background:var(--yel);vertical-align:text-bottom;margin-left:2px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.hero2 .btn.big{display:inline-block;text-align:left;line-height:1.35}
 </style>
 
 <div class="app">
@@ -329,11 +509,12 @@ details.lesson[open]{border-color:var(--m);box-shadow:inset 4px 0 0 var(--m)}
   <aside class="side" id="side">
     <div class="brand"><div class="brand-mark">DA</div><div><b>Laboratorio del Analista</b><small>Ruta práctica de datos</small></div></div>
     <div class="xpbox">
-      <div class="lvl"><span>Nivel</span><b id="lvlName">Aprendiz</b></div>
+      <div class="prof"><div class="avatar" title="Tu nivel"><span id="lvlNum">1</span></div><div><small>Nivel</small><b id="lvlName">Aprendiz</b></div></div>
       <div class="bar"><i id="lvlBar" style="width:0%"></i></div>
       <div class="lvl"><span id="xpTxt">0 XP</span><span id="lvlNext">próximo: 100</span></div>
       <div class="daybox"><span class="fire" id="streak">0</span><span>días de racha</span><span></span><span><span id="todayTxt">Meta de hoy: 0 / 50 XP</span><span class="bar" style="display:block;margin-top:4px"><i id="todayBar" style="width:0%"></i></span></span></div>
     </div>
+    <button class="continue" data-continue data-goto="fundamentos"><span>Continuar mi ruta</span><b>Paso 1</b><i aria-hidden="true">▶</i></button>
     <nav class="nav" id="nav"></nav>
     <div class="side-foot">
       <button class="linkbtn" id="themeBtn">Cambiar tema claro/oscuro</button>
@@ -347,15 +528,15 @@ details.lesson[open]{border-color:var(--m);box-shadow:inset 4px 0 0 var(--m)}
 <canvas id="fx" aria-hidden="true"></canvas>
 <div class="lvlup" id="lvlup" role="status" aria-live="polite"><small>¡Subiste de nivel!</small><b id="lvlupName"></b></div>
 
-<script src="js/core.js?v=1792002400"></script>
-<script src="js/data.js?v=1792002400"></script>
-<script src="js/m-inicio.js?v=1792002400"></script>
-<script src="js/m-scraping.js?v=1792002400"></script>
-<script src="js/m-api.js?v=1792002400"></script>
-<script src="js/m-python.js?v=1792002400"></script>
-<script src="js/m-sql.js?v=1792002400"></script>
-<script src="js/m-excel.js?v=1792002400"></script>
-<script src="js/m-powerbi.js?v=1792002400"></script>
-<script src="js/m-extra.js?v=1792002400"></script>
+<script src="js/core.js?v=1792003357"></script>
+<script src="js/data.js?v=1792003357"></script>
+<script src="js/m-inicio.js?v=1792003357"></script>
+<script src="js/m-scraping.js?v=1792003357"></script>
+<script src="js/m-api.js?v=1792003357"></script>
+<script src="js/m-python.js?v=1792003357"></script>
+<script src="js/m-sql.js?v=1792003357"></script>
+<script src="js/m-excel.js?v=1792003357"></script>
+<script src="js/m-powerbi.js?v=1792003357"></script>
+<script src="js/m-extra.js?v=1792003357"></script>
 <script>App.start();</script>
 </body></html>

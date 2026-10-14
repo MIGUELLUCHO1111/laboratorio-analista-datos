@@ -13,6 +13,20 @@ const LEVELS = [
   [600, 'Analista Jr.'], [1000, 'Analista de Datos'], [1600, 'Analista Sr.'], [2400, 'Experto en datos']
 ];
 
+/* La ruta de aprendizaje, en orden. Cada paso explica por qué va en ese lugar. */
+const ROUTE = [
+  ['fundamentos', 'Antes de tocar una herramienta necesitas saber qué preguntar, qué tipo de dato tienes y cómo no engañarte con un promedio. Todo lo demás se apoya en esto.'],
+  ['excel', 'Es la herramienta que más usan las empresas y la forma más visual de entender tablas, fórmulas y agrupaciones. Esa misma lógica la reutilizas en SQL y en Power BI.'],
+  ['sql', 'Ya piensas en filas y columnas gracias a Excel. SQL hace lo mismo sobre bases de datos enormes y es la habilidad que más piden las ofertas de analista.'],
+  ['python', 'Python automatiza lo que hiciste a mano en Excel y SQL. Sus listas y diccionarios son exactamente la forma de los datos que devuelven las APIs.'],
+  ['api', 'Con Python ya manejas listas y diccionarios: el JSON de una API es eso mismo. Aquí aprendes a pedir datos a otros sistemas de forma oficial.'],
+  ['scraping', 'Cuando una web no ofrece API, extraes los datos de su HTML. Requiere Python y entender las peticiones que viste en APIs.'],
+  ['powerbi', 'Ya sabes obtener, limpiar y consultar datos. Ahora los modelas y los conviertes en tableros que cuentan una historia para decidir.'],
+  ['github', 'Guarda tu trabajo con historial y muéstralo. Tu GitHub es tu portafolio frente a los reclutadores.'],
+  ['proyecto', 'La prueba final: preguntas de negocio reales que resuelves combinando todo, como en un trabajo de analista.']
+];
+const DONE_PCT = 80;
+
 const App = {
   modules: [],
   tasks: {},
@@ -41,12 +55,14 @@ const App = {
     const d = t.filter(i => this.state.done[i]).length;
     return { d, t: t.length, pct: t.length ? Math.round(d * 100 / t.length) : 0 };
   },
+  routeMods() { return this.modules.filter(m => m.step); },
+  nextStep() { const r = this.routeMods(); return r.find(m => this.progress(m.id).pct < DONE_PCT) || r[r.length - 1]; },
   level() {
     const xp = this.state.xp;
     let i = 0;
     while (i + 1 < LEVELS.length && xp >= LEVELS[i + 1][0]) i++;
     const cur = LEVELS[i], next = LEVELS[i + 1];
-    return { name: cur[1], xp, next: next ? next[0] : null, pct: next ? Math.round((xp - cur[0]) * 100 / (next[0] - cur[0])) : 100 };
+    return { name: cur[1], n: i + 1, xp, next: next ? next[0] : null, pct: next ? Math.round((xp - cur[0]) * 100 / (next[0] - cur[0])) : 100 };
   },
   refresh() {
     const L = this.level();
@@ -63,10 +79,21 @@ const App = {
     while (days.has(d.toDateString())) { st++; d.setDate(d.getDate() - 1); }
     $('#streak').textContent = st;
     countUp($('#xpTxt'), L.xp, ' XP');
+    $('#lvlNum').textContent = L.n;
+    const nx = this.nextStep();
+    $$('[data-continue]').forEach(b => { b.dataset.goto = nx.id; const t = b.querySelector('b'); if (t) t.textContent = `Paso ${nx.step} · ${nx.title}`; });
+    let doneSteps = 0;
     for (const m of this.modules) {
       const p = this.progress(m.id);
-      const fg = $(`#nav [data-go="${m.id}"] .fg`);
-      if (fg) fg.setAttribute('stroke-dasharray', `${(p.pct / 100) * 56.5} 56.5`);
+      const stop = $(`#nav [data-go="${m.id}"]`);
+      if (stop) {
+        stop.style.setProperty('--p', p.pct);
+        stop.classList.toggle('done', !!m.step && p.pct >= DONE_PCT);
+        stop.classList.toggle('next', m === nx);
+        const sm = stop.querySelector('small');
+        if (sm && m.step) sm.textContent = p.pct >= DONE_PCT ? `Completado · ${p.pct}%` : m === nx ? `Tu paso actual · ${p.pct}%` : p.pct ? `En progreso · ${p.pct}%` : 'Pendiente';
+        if (m.step && p.pct >= DONE_PCT) doneSteps++;
+      }
       $$(`[data-prog="${m.id}"]`).forEach(el => {
         const bar = el.querySelector('i'); if (bar) bar.style.width = p.pct + '%';
         const tx = el.parentElement.querySelector('.pc'); if (tx) tx.textContent = `${p.d} de ${p.t} actividades · ${p.pct}%`;
@@ -76,6 +103,8 @@ const App = {
       $$(`.modcard[data-goto="${m.id}"]`).forEach(el => el.style.setProperty('--p', p.pct / 100));
     }
     $$('details.lesson[data-task]').forEach(d => d.classList.toggle('done', this.isDone(d.dataset.task)));
+    const metro = $('#nav .metro'); if (metro) metro.style.setProperty('--fill', Math.min(1, (doneSteps + .5) / this.routeMods().length));
+    if (this.onRefresh) this.onRefresh();
   },
   go(id, push = true) {
     const m = this.modules.find(x => x.id === id) || this.modules[0];
@@ -87,13 +116,31 @@ const App = {
     window.scrollTo({ top: 0 });
     if (m.onShow) m.onShow();
     Tutor.setContext(m);
+    this.mentorGate(m);
+  },
+  /* Si saltas un paso, el mentor te dice qué falta y por qué conviene seguir el orden */
+  mentorGate(m) {
+    const sec = $('#sec-' + m.id); $$('.mentor-gate', sec).forEach(x => x.remove());
+    if (!m.step || m.step === 1) return;
+    const prev = this.routeMods().find(x => x.step === m.step - 1), pp = this.progress(prev.id).pct;
+    const skip = store.get('dl_skip', {});
+    if (pp >= 50 || skip[m.id]) return;
+    const head = sec.querySelector('.mhead'); if (!head) return;
+    head.insertAdjacentHTML('afterend', `<div class="mentor mentor-gate"><span class="mavatar">M</span><div><b>Tu mentor te recomienda ir en orden</b><p>Llevas ${pp}% de <b>Paso ${prev.step} · ${esc(prev.title)}</b>. ${esc(m.why)}</p><div class="row"><button class="btn sm" data-goto="${prev.id}" style="--m:var(${prev.color})">Volver al paso ${prev.step}</button><button class="btn ghost sm" data-skipgate="${m.id}">Entiendo, quiero explorar igual</button></div></div></div>`);
   },
   start() {
     const nav = $('#nav');
-    let group = null;
+    const byId = Object.fromEntries(this.modules.map(m => [m.id, m]));
+    ROUTE.forEach(([id, why], i) => { const m = byId[id]; if (m) { m.step = i + 1; m.why = why; m.group = `Paso ${i + 1} de ${ROUTE.length}`; } });
+    const rest = this.modules.filter(m => !m.step && m.id !== 'inicio');
+    this.modules = [byId.inicio, ...ROUTE.map(r => byId[r[0]]).filter(Boolean), ...rest];
+    rest.forEach(m => m.group = 'Recursos');
+    nav.innerHTML = `<button data-go="inicio" class="homebtn" style="--m:var(--c-fund)"><span class="hb-ico">⌂</span><span>Inicio y mapa</span></button>
+      <div class="nav-group">Tu ruta paso a paso</div>
+      <ol class="metro">${this.routeMods().map(m => `<li><button data-go="${m.id}" class="stop" style="--m:var(${m.color})"><span class="node"><span>${m.step}</span></span><span class="lbl"><b>${esc(m.title)}</b><small>Pendiente</small></span></button></li>`).join('')}</ol>
+      <div class="nav-group">Recursos</div>
+      ${rest.map(m => `<button data-go="${m.id}" class="res" style="--m:var(${m.color})"><span class="glyph">${m.glyph}</span><span>${esc(m.title)}</span></button>`).join('')}`;
     for (const m of this.modules) {
-      if (m.group !== group) { group = m.group; nav.insertAdjacentHTML('beforeend', `<div class="nav-group">${esc(group)}</div>`); }
-      nav.insertAdjacentHTML('beforeend', `<button data-go="${m.id}" style="--m:var(${m.color})"><span class="glyph">${m.glyph}</span><span>${esc(m.title)}</span><svg class="ring" viewBox="0 0 22 22"><circle class="bg" cx="11" cy="11" r="9"/><circle class="fg" cx="11" cy="11" r="9" stroke-dasharray="0 56.5" transform="rotate(-90 11 11)"/></svg></button>`);
       const sec = document.createElement('section');
       sec.className = 'section'; sec.id = 'sec-' + m.id; sec.hidden = true;
       sec.style.setProperty('--m', `var(${m.color})`);
@@ -101,6 +148,7 @@ const App = {
       try { m.render(sec); } catch (e) { sec.innerHTML = `<div class="note warn">Error al cargar este módulo: ${esc(e.message)}</div>`; console.error(e); }
     }
     nav.addEventListener('click', e => { const b = e.target.closest('[data-go]'); if (b) this.go(b.dataset.go); });
+    document.addEventListener('click', e => { const k = e.target.closest('[data-skipgate]'); if (k) { const sk = store.get('dl_skip', {}); sk[k.dataset.skipgate] = 1; store.set('dl_skip', sk); k.closest('.mentor-gate').remove(); } });
     document.addEventListener('click', e => {
       const g = e.target.closest('[data-goto]'); if (g) { e.preventDefault(); this.go(g.dataset.goto); }
     });
@@ -145,12 +193,13 @@ function moduleHead(m, lead, extra = '') {
     <h1>${m.heading || esc(m.title)}</h1>
     <p class="lead">${lead}</p>
     <div class="mstats"><span class="chip" data-mstat="${m.id}"></span>${extra}</div>
+    ${m.why ? `<p class="mwhy"><b>Por qué va en este paso:</b> ${esc(m.why)}</p>` : ''}
   </header>`;
 }
 
 /* Pestañas dentro de un módulo: tabs = [{id,label}] ; devuelve html. Activar con bindTabs(root) */
 function tabsHTML(tabs) {
-  return `<nav class="tabs" role="tablist">${tabs.map((t, i) => `<button role="tab" data-tab="${t.id}" class="${i ? '' : 'on'}">${t.label}</button>`).join('')}</nav>`;
+  return `<nav class="tabs" role="tablist">${tabs.map((t, i) => `<button role="tab" data-tab="${t.id}" data-label="${esc(t.label)}" class="${i ? '' : 'on'}"><span class="tn">${i + 1}</span>${t.label}</button>${i < tabs.length - 1 ? '<span class="tarr" aria-hidden="true">›</span>' : ''}`).join('')}</nav>`;
 }
 function bindTabs(root) {
   const btns = $$('.tabs [data-tab]', root);
@@ -160,6 +209,19 @@ function bindTabs(root) {
     root.dispatchEvent(new CustomEvent('tabshow', { detail: id }));
   };
   btns.forEach(b => b.onclick = () => { show(b.dataset.tab); root.querySelector('.tabs').scrollIntoView({ block: 'nearest' }); });
+  const panes = btns.map(b => $(`.pane[data-pane="${b.dataset.tab}"]`, root));
+  const mod = App.modules.find(m => 'sec-' + m.id === root.id);
+  panes.forEach((p, i) => {
+    if (!p) return;
+    if (i < panes.length - 1) {
+      const nl = btns[i + 1].dataset.label;
+      p.insertAdjacentHTML('beforeend', `<div class="nextbar"><span class="mavatar">M</span><p><b>¿Terminaste esta parte?</b> El orden recomendado sigue con <b>${nl}</b>.</p><button class="btn" data-nexttab="${btns[i + 1].dataset.tab}">Siguiente: ${nl} →</button></div>`);
+    } else if (mod && mod.step) {
+      const nm = App.routeMods().find(x => x.step === mod.step + 1);
+      p.insertAdjacentHTML('beforeend', nm ? `<div class="nextbar big" style="--m:var(${nm.color})"><span class="mavatar">M</span><p><b>Siguiente paso de tu ruta: Paso ${nm.step} · ${esc(nm.title)}</b><br>${esc(nm.why)}</p><button class="btn" data-goto="${nm.id}">Ir al paso ${nm.step} →</button></div>` : `<div class="nextbar big"><span class="mavatar">M</span><p><b>Llegaste al final de la ruta.</b> Repasa los retos que te costaron y arma tu portafolio en GitHub.</p></div>`);
+    }
+  });
+  root.addEventListener('click', e => { const n = e.target.closest('[data-nexttab]'); if (n) { show(n.dataset.nexttab); root.querySelector('.tabs').scrollIntoView({ behavior: 'smooth', block: 'start' }); } });
   if (btns[0]) show(btns[0].dataset.tab);
   return show;
 }
@@ -208,7 +270,16 @@ document.addEventListener('click', e => {
     App.done(q.dataset.qid, 5, 'Respuesta correcta');
   } else {
     b.disabled = true;
-    w.textContent = '✘ Esa no es. Piensa en la lógica e intenta otra opción.';
+    q.dataset.wrong = (+q.dataset.wrong || 0) + 1;
+    const qt = q.querySelector('.q-t').textContent, ans = q.querySelectorAll('.opt')[+q.dataset.a].textContent;
+    if (+q.dataset.wrong >= 2) {
+      $$('.opt', q).forEach(x => x.disabled = true); q.querySelectorAll('.opt')[+q.dataset.a].classList.add('ok');
+      w.innerHTML = `✘ No es “${esc(b.textContent)}”. La correcta es <b>“${esc(ans)}”</b>. Por qué: ${esc(w.dataset.why)}`;
+      App.done(q.dataset.qid, 2, 'Aprendiste del error');
+    } else {
+      w.innerHTML = `✘ No es “${esc(b.textContent)}”. Piensa otra vez en la lógica: tienes un intento más antes de ver la explicación. <button class="btn ghost sm" data-whynot>¿Por qué no es correcta?</button>`;
+      w.querySelector('[data-whynot]').onclick = () => Tutor.ask(`En la pregunta "${qt}" elegí "${b.textContent}". Explícame por qué esa opción no es correcta y qué lógica debo usar, sin darme directamente la respuesta.`);
+    }
   }
 });
 
